@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sarf-atlas"
-version = "0.1.0"
-description = "Backend-agnostic workflow scaffolding for Arabic morphology probing experiments."
+version = "0.2.0"
+description = "Backend-agnostic workflow and artifact tooling for Arabic morphology probing experiments."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []

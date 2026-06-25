@@ -48,7 +48,7 @@ def write_ember_config(
         "",
         "[run_metadata]",
         'workspace = "sarf-atlas"',
-        'purpose = "Sarf v0.1 toy workflow config"',
+        'purpose = "Sarf v0.2 toy workflow config"',
         "toy = true",
         "no_generation = true",
         "no_hidden_states = true",

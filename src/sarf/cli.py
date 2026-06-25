@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 import argparse
+import json
+from pathlib import Path
 import sys
 
 from .ember_config import write_ember_config
 from .io import read_jsonl, write_json, write_jsonl
 from .prompts import make_prompts
+from .project import init_project
 from .splits import lemma_heldout_split
+from .summary import summarize_manifest
 from .toy import toy_records
 from .validation import validate_run
 from .workflow import DEFAULT_TEMPLATE, write_example_workflow
@@ -97,6 +101,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
+    p = sub.add_parser("init", help="create a clean Sarf v0.2 project layout")
+    p.add_argument("path", nargs="?", help="project directory to create or update")
+    p.add_argument("--out-dir", default=".", help="project directory to create or update")
+    p.add_argument("--name", default="sarf-project", help="project name written to sarf.project.json")
+    p.add_argument("--force", action="store_true", help="allow adding layout files to a non-empty directory")
+
     p = sub.add_parser("toy-dataset", help="write the bundled toy morphology dataset")
     p.add_argument("--out", required=True, help="output JSONL path")
 
@@ -140,9 +150,26 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--hidden-states-path", help="optional hidden-state artifact path")
     p.add_argument("--report-path", help="optional report artifact path")
 
+    p = sub.add_parser("import-artifacts", help="import backend artifacts as a Sarf manifest")
+    p.add_argument("--from", dest="source", choices=["ember", "files"], required=True, help="artifact source type")
+    p.add_argument("--out", required=True, help="output Sarf artifact manifest JSON")
+    p.add_argument("--run-id", help="Sarf run id or override")
+    p.add_argument("--run-dir", help="Ember artifact run directory when --from ember")
+    p.add_argument("--prompts-path", help="prompt/sample artifact path when --from files")
+    p.add_argument("--tokenization-path", help="optional tokenization artifact path")
+    p.add_argument("--positions-path", help="optional positions artifact path")
+    p.add_argument("--logits-path", help="optional logits artifact path")
+    p.add_argument("--hidden-states-path", help="optional hidden-state artifact path")
+    p.add_argument("--report-path", help="optional report artifact path")
+
     p = sub.add_parser("validate-manifest", help="validate a Sarf artifact manifest JSON")
     p.add_argument("--manifest", required=True, help="Sarf artifact manifest JSON")
     p.add_argument("--out", help="optional validation report JSON")
+
+    p = sub.add_parser("summarize-run", help="summarize a Sarf artifact manifest")
+    p.add_argument("target", nargs="?", help="Sarf artifact manifest JSON or project directory")
+    p.add_argument("--manifest", help="Sarf artifact manifest JSON")
+    p.add_argument("--out", help="optional summary JSON output path")
 
     p = sub.add_parser("backends", help="inspect optional local backend availability")
     backends_sub = p.add_subparsers(dest="backends_command", required=True)
@@ -157,11 +184,13 @@ def main(argv: list[str] | None = None) -> int:
     ember_sub = ember_parser.add_subparsers(dest="backend_command", required=True)
     ember_sub.add_parser("doctor", help="show Ember detection details")
 
-    p = sub.add_parser("example-workflow", help="write the complete toy v0.1 workflow scaffold")
+    p = sub.add_parser("example-workflow", help="write the complete toy workflow scaffold")
     p.add_argument("--out-dir", required=True, help="output workflow directory")
 
     args = parser.parse_args(argv)
-    if args.command == "toy-dataset":
+    if args.command == "init":
+        init_project(args.path or args.out_dir, name=args.name, force=args.force)
+    elif args.command == "toy-dataset":
         write_jsonl(args.out, toy_records())
     elif args.command == "make-prompts":
         write_jsonl(args.out, make_prompts(read_jsonl(args.input), args.template))
@@ -198,16 +227,54 @@ def main(argv: list[str] | None = None) -> int:
                 report_path=args.report_path,
             ).to_dict(),
         )
+    elif args.command == "import-artifacts":
+        if args.source == "ember":
+            if not args.run_dir:
+                raise ValueError("--run-dir is required when --from ember")
+            manifest = import_ember_run(args.run_dir, run_id=args.run_id)
+        else:
+            if not args.run_id:
+                raise ValueError("--run-id is required when --from files")
+            if not args.prompts_path:
+                raise ValueError("--prompts-path is required when --from files")
+            manifest = import_files(
+                run_id=args.run_id,
+                prompts_path=args.prompts_path,
+                tokenization_path=args.tokenization_path,
+                positions_path=args.positions_path,
+                logits_path=args.logits_path,
+                hidden_states_path=args.hidden_states_path,
+                report_path=args.report_path,
+            )
+        write_json(args.out, manifest.to_dict())
     elif args.command == "validate-manifest":
-        import json
-        from pathlib import Path
-
         report = validate_manifest(json.loads(Path(args.manifest).read_text(encoding="utf-8")))
         if args.out:
             write_json(args.out, report)
         else:
             print(json.dumps(report, ensure_ascii=False, indent=2))
         return 0 if report["passed"] else 1
+    elif args.command == "summarize-run":
+        target = args.manifest or args.target
+        if not target:
+            raise ValueError("summarize-run requires a manifest path or project directory")
+        target_path = Path(target)
+        if target_path.is_dir():
+            manifests = sorted((target_path / "artifacts" / "imported").glob("*.json"))
+            summary = {
+                "project_path": str(target_path),
+                "manifest_count": len(manifests),
+                "runs": [summarize_manifest(path) for path in manifests],
+            }
+        else:
+            summary = summarize_manifest(target_path)
+        if args.out:
+            write_json(args.out, summary)
+        else:
+            print(json.dumps(summary, ensure_ascii=False, indent=2))
+        if "validation" in summary:
+            return 0 if summary["validation"]["passed"] else 1
+        return 0
     elif args.command == "backends":
         if args.backends_command == "list":
             _print_backends_list()

@@ -6,6 +6,7 @@ from .artifacts import BackendDescriptor, SarfArtifactManifest
 from .ember_config import write_ember_config
 from .io import write_json, write_jsonl
 from .prompts import make_prompts
+from .project import init_project
 from .splits import lemma_heldout_split
 from .toy import toy_records
 
@@ -15,16 +16,17 @@ DEFAULT_TEMPLATE = "حلل صرفيا الكلمة العربية: {word}"
 
 def write_example_workflow(out_dir: str | Path) -> dict[str, str]:
     out = Path(out_dir)
+    init_project(out, name="sarf-v0.2-example", force=True)
     records = toy_records()
     split_records, split_metadata = lemma_heldout_split(records)
     prompts = make_prompts(split_records, DEFAULT_TEMPLATE)
 
-    dataset_path = out / "toy_morphology.jsonl"
-    prompts_path = out / "prompts.jsonl"
-    split_path = out / "split_metadata.json"
-    config_path = out / "ember_native_logits.placeholder.toml"
+    dataset_path = out / "data" / "processed" / "toy_morphology.jsonl"
+    prompts_path = out / "prompts" / "toy_prompts.jsonl"
+    split_path = out / "splits" / "toy_split_metadata.json"
+    config_path = out / "configs" / "ember_native_logits.placeholder.toml"
     workflow_path = out / "workflow.json"
-    artifact_manifest_path = out / "sarf_artifact_manifest.placeholder.json"
+    artifact_manifest_path = out / "artifacts" / "imported" / "sarf_artifact_manifest.placeholder.json"
 
     write_jsonl(dataset_path, split_records)
     write_jsonl(prompts_path, prompts)
@@ -52,7 +54,8 @@ def write_example_workflow(out_dir: str | Path) -> dict[str, str]:
     )
     write_json(artifact_manifest_path, artifact_manifest.to_dict())
     manifest = {
-        "kind": "sarf_v0_1_example_workflow",
+        "kind": "sarf_v0_2_example_workflow",
+        "sarf_version": "0.2",
         "toy": True,
         "not_research_output": True,
         "architecture": "Sarf organizes. Backends extract. Auditors compare.",
@@ -62,6 +65,8 @@ def write_example_workflow(out_dir: str | Path) -> dict[str, str]:
         "ember_config": str(config_path),
         "sarf_artifact_manifest": str(artifact_manifest_path),
         "validate_command": "cargo run -- validate-run <run-dir>",
+        "import_command": f"sarf import-artifacts --from files --run-id sarf-v01-toy-native-logits --prompts-path {prompts_path} --out {artifact_manifest_path}",
+        "summary_command": f"sarf summarize-run --manifest {artifact_manifest_path}",
         "notes": [
             "Replace placeholder model/tokenizer paths before running Ember extraction.",
             "Use adapters to import Ember, file-based, or future backend outputs into Sarf artifacts.",

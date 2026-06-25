@@ -39,16 +39,29 @@ Install Sarf Atlas:
 pip install sarf-atlas
 ```
 
-Generate the v0.1 toy workflow scaffold:
+Create a v0.2 project layout:
 
 ```bash
-sarf example-workflow --out-dir /tmp/sarf-atlas-v0.1-example
+sarf init --out-dir /tmp/sarf-atlas-project --name sarf-atlas-project
 ```
 
-This writes a toy morphology dataset, prompts, split metadata, Ember config
+Generate the toy workflow scaffold:
+
+```bash
+sarf example-workflow --out-dir /tmp/sarf-atlas-example
+```
+
+Import and summarize artifacts:
+
+```bash
+sarf import-artifacts --from files --run-id toy-run --prompts-path prompts/toy_prompts.jsonl --out artifacts/imported/toy-run.manifest.json
+sarf summarize-run --manifest artifacts/imported/toy-run.manifest.json
+```
+
+The scaffold writes toy morphology data, prompts, split metadata, Ember config
 placeholders, a Sarf artifact manifest, and an example workflow manifest. It is
 framework scaffolding only, not hidden-state extraction, Paper 1 reproduction,
-or research output.
+or research output. See `docs/CLI.md` for the backend capability matrix.
 
 Current adapter namespace:
 
@@ -61,7 +74,7 @@ precomputed hidden-state formats.
 
 ## Optional Backends
 
-Sarf v0.1 can inspect local backend availability, but detection is optional and
+Sarf v0.2 can inspect local backend availability, but detection is optional and
 does not make llama.cpp, Ember, Transformers/HF, or hidden-state extraction part
 of the base package:
 
