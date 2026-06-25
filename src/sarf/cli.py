@@ -6,7 +6,14 @@ from pathlib import Path
 import sys
 
 from .dataset import validate_dataset_rows
+from .diagnostics import (
+    format_label_diagnostics,
+    format_split_diagnostics,
+    label_diagnostics,
+    split_diagnostics,
+)
 from .ember_config import write_ember_config
+from .eval_scaffold import write_baseline_scaffolds, write_probe_config
 from .experiment import (
     make_prompts_from_experiment,
     make_splits_from_experiment,
@@ -108,7 +115,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p = sub.add_parser("init", help="create a clean Sarf v0.3 project layout")
+    p = sub.add_parser("init", help="create a clean Sarf v0.4 project layout")
     p.add_argument("path", nargs="?", help="project directory to create or update")
     p.add_argument("--out-dir", default=".", help="project directory to create or update")
     p.add_argument("--name", default="sarf-project", help="project name written to sarf.project.json")
@@ -121,6 +128,10 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("input", help="input morphology JSONL")
     p.add_argument("--out", help="optional validation report JSON")
 
+    p = sub.add_parser("validate-labels", help="summarize label cardinality and missing/null values")
+    p.add_argument("input", help="experiment TOML or morphology JSONL")
+    p.add_argument("--out", help="optional label diagnostics JSON")
+
     p = sub.add_parser("make-prompts", help="render prompt JSONL from records or an experiment TOML")
     p.add_argument("experiment", nargs="?", help="experiment TOML")
     p.add_argument("--input", help="input morphology JSONL")
@@ -131,9 +142,23 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("experiment", help="experiment TOML")
     p.add_argument("--out", required=True, help="output split metadata JSON")
 
+    p = sub.add_parser("summarize-splits", help="summarize train/test split diagnostics")
+    p.add_argument("dataset", help="input morphology JSONL")
+    p.add_argument("splits", help="split metadata JSON or split JSONL")
+    p.add_argument("--out", help="optional split diagnostics JSON")
+
     p = sub.add_parser("make-experiment", help="write a Paper-style experiment scaffold from TOML")
     p.add_argument("experiment", help="experiment TOML")
     p.add_argument("--out", required=True, help="output run directory")
+
+    p = sub.add_parser("make-probe-config", help="write a probe_config.toml scaffold")
+    p.add_argument("experiment", help="experiment TOML")
+    p.add_argument("--artifact-manifest", help="optional artifact manifest path")
+    p.add_argument("--out", default="probe_config.toml", help="output probe config TOML")
+
+    p = sub.add_parser("make-baselines", help="write baseline config scaffold files")
+    p.add_argument("experiment", help="experiment TOML")
+    p.add_argument("--out", default="baseline_configs", help="output baseline scaffold directory")
 
     p = sub.add_parser("report", help="write a readable experiment report")
     p.add_argument("run_dir", help="experiment run directory")
@@ -223,6 +248,11 @@ def main(argv: list[str] | None = None) -> int:
         else:
             print(json.dumps(report, ensure_ascii=False, indent=2))
         return 0 if report["passed"] else 1
+    elif args.command == "validate-labels":
+        report = label_diagnostics(args.input)
+        if args.out:
+            write_json(args.out, report)
+        print(format_label_diagnostics(report))
     elif args.command == "make-prompts":
         if args.experiment:
             write_jsonl(args.out, make_prompts_from_experiment(args.experiment))
@@ -232,8 +262,19 @@ def main(argv: list[str] | None = None) -> int:
             raise ValueError("make-prompts requires an experiment TOML or --input")
     elif args.command == "make-splits":
         write_json(args.out, make_splits_from_experiment(args.experiment))
+    elif args.command == "summarize-splits":
+        report = split_diagnostics(args.dataset, args.splits)
+        if args.out:
+            write_json(args.out, report)
+        print(format_split_diagnostics(report))
     elif args.command == "make-experiment":
         write_experiment_scaffold(args.experiment, args.out)
+    elif args.command == "make-probe-config":
+        write_probe_config(args.experiment, args.out, artifact_manifest=args.artifact_manifest)
+        print(f"wrote {args.out}")
+    elif args.command == "make-baselines":
+        write_baseline_scaffolds(args.experiment, args.out)
+        print(f"wrote {args.out}")
     elif args.command == "report":
         summary_path = Path(args.run_dir) / "summary.json"
         if not summary_path.exists():

@@ -77,7 +77,7 @@ def heldout_split(
         "rows": rows,
         "char_baseline_metadata": {
             "status": "placeholder",
-            "notes": "Sarf v0.3 records where character-baseline metadata belongs; it does not run baselines.",
+            "notes": "Sarf v0.4 records where character-baseline metadata belongs; it does not run baselines.",
         },
         "not_research_output": True,
     }

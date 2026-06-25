@@ -49,7 +49,7 @@ def validate_dataset_rows(rows: Iterable[dict[str, Any]]) -> dict[str, Any]:
 
     failing = [row for row in row_reports if not row["passed"]]
     return {
-        "schema": "sarf_morphology_dataset_v0_3",
+        "schema": "sarf_morphology_dataset_v0_4",
         "passed": not failing and row_count > 0,
         "row_count": row_count,
         "failed_row_count": len(failing),
@@ -58,4 +58,3 @@ def validate_dataset_rows(rows: Iterable[dict[str, Any]]) -> dict[str, Any]:
         "optional_null_counts": dict(optional_null_counts),
         "rows": row_reports,
     }
-

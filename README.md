@@ -63,23 +63,30 @@ placeholders, a Sarf artifact manifest, and an example workflow manifest. It is
 framework scaffolding only, not hidden-state extraction, Paper 1 reproduction,
 or research output. See `docs/CLI.md` for the backend capability matrix.
 
-## Paper-Style Workflow Preparation
+## Evaluation-Preparation Workflow
 
-Sarf v0.3 adds commands for realistic Arabic morphology experiment preparation:
+Sarf v0.4 adds evaluation-preparation diagnostics on top of the Paper-style
+workflow commands:
 
 ```bash
 sarf validate-dataset examples/paper_style/tiny_morphology.jsonl
-sarf make-prompts examples/paper_style/experiment.toml --out /tmp/sarf-v03/prompts.jsonl
-sarf make-splits examples/paper_style/experiment.toml --out /tmp/sarf-v03/splits.json
-sarf make-experiment examples/paper_style/experiment.toml --out /tmp/sarf-v03/run
-sarf report /tmp/sarf-v03/run --out /tmp/sarf-v03/report.md
+sarf validate-labels examples/paper_style/experiment.toml --out /tmp/sarf-v04/label_diagnostics.json
+sarf make-prompts examples/paper_style/experiment.toml --out /tmp/sarf-v04/prompts.jsonl
+sarf make-splits examples/paper_style/experiment.toml --out /tmp/sarf-v04/splits.json
+sarf summarize-splits examples/paper_style/tiny_morphology.jsonl /tmp/sarf-v04/splits.json --out /tmp/sarf-v04/split_diagnostics.json
+sarf make-probe-config examples/paper_style/experiment.toml --artifact-manifest /tmp/sarf-v04/artifact_manifest.json --out /tmp/sarf-v04/probe_config.toml
+sarf make-baselines examples/paper_style/experiment.toml --out /tmp/sarf-v04/baselines
+sarf make-experiment examples/paper_style/experiment.toml --out /tmp/sarf-v04/run
+sarf report /tmp/sarf-v04/run --out /tmp/sarf-v04/report.md
 ```
 
 This supports dataset rows, prompt construction, label fields,
 lemma-heldout/root-heldout split metadata, character-baseline metadata
-placeholders, backend config stubs, artifact import, and report scaffolding.
-Sarf v0.3 does not train probes, run models, extract hidden states, or claim
-paper reproduction.
+placeholders, backend config stubs, artifact import, label diagnostics, split
+diagnostics, probe config scaffolds, baseline config scaffolds, and report
+scaffolding. Sarf v0.4 does not train probes or baselines, run models, extract
+hidden states, run model inference, or claim paper reproduction. See
+`docs/evaluation_diagnostics.md` for leakage and cardinality guidance.
 
 Current adapter namespace:
 
@@ -92,7 +99,7 @@ precomputed hidden-state formats.
 
 ## Optional Backends
 
-Sarf v0.3 can inspect local backend availability, but detection is optional and
+Sarf v0.4 can inspect local backend availability, but detection is optional and
 does not make llama.cpp, Ember, Transformers/HF, or hidden-state extraction part
 of the base package:
 

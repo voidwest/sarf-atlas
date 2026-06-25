@@ -52,7 +52,7 @@ class V02CliTests(unittest.TestCase):
 
             project = json.loads((project_dir / "sarf.project.json").read_text(encoding="utf-8"))
             self.assertEqual(project["name"], "paper1")
-            self.assertEqual(project["sarf_version"], "0.3")
+            self.assertEqual(project["sarf_version"], "0.4")
 
     def test_summarize_run_accepts_project_directory_without_manifests(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

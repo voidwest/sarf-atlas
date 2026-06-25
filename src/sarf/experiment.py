@@ -68,7 +68,7 @@ def make_splits_from_experiment(config_path: str | Path) -> dict[str, Any]:
     rows = normalized_dataset_from_config(config, config_path=config_path)
     options = split_config(config)
     return {
-        "schema": "sarf_split_metadata_v0_3",
+        "schema": "sarf_split_metadata_v0_4",
         "strategies": [
             heldout_split(rows, strategy=strategy, test_fraction=options["test_fraction"], seed=options["seed"])
             for strategy in options["strategies"]
@@ -93,8 +93,12 @@ def write_experiment_scaffold(config_path: str | Path, out_dir: str | Path) -> d
     prompts = make_prompts_from_experiment(config_path)
     splits = make_splits_from_experiment(config_path)
     validation = validate_dataset_rows(normalized_dataset_from_config(config, config_path=config_path))
+    from .diagnostics import label_diagnostics, split_diagnostics
+
+    labels = label_diagnostics(config_path)
     write_jsonl(prompts_path, prompts)
     write_json(splits_path, splits)
+    split_summary = split_diagnostics(dataset_path_from_config(config, config_path=config_path), splits_path)
 
     run = config.get("experiment", {})
     run_id = str(run.get("run_id", out.name)) if isinstance(run, dict) else out.name
@@ -130,6 +134,8 @@ def write_experiment_scaffold(config_path: str | Path, out_dir: str | Path) -> d
         "run_id": run_id,
         "dataset": str(dataset_path_from_config(config, config_path=config_path)),
         "dataset_validation": validation,
+        "label_diagnostics": labels,
+        "split_diagnostics": split_summary,
         "prompts_path": str(prompts_path),
         "splits_path": str(splits_path),
         "backend_config_path": str(backend_config_path),
@@ -159,16 +165,43 @@ def render_experiment_markdown(summary: dict[str, Any]) -> str:
         f"- Rows: {validation['row_count']}",
         f"- Validation: {'passed' if validation['passed'] else 'failed'}",
         "",
-        "## Generated Files",
-        "",
-        f"- Prompts: `{summary['prompts_path']}`",
-        f"- Splits: `{summary['splits_path']}`",
-        f"- Backend config stub: `{summary['backend_config_path']}`",
-        f"- Artifact manifest stub: `{summary['artifact_manifest_path']}`",
-        "",
-        "## What Sarf Still Does Not Do",
-        "",
-        "Sarf v0.3 does not train probes, run models, extract hidden states, or claim paper reproduction. It prepares and validates the workflow structure around those steps.",
-        "",
     ]
+    if "label_diagnostics" in summary:
+        label_report = summary["label_diagnostics"]
+        lines.extend(
+            [
+                "## Label Diagnostics",
+                "",
+                f"- Target labels: {', '.join(label_report.get('target_labels', [])) or 'none'}",
+                f"- Warnings: {len(label_report.get('warnings', []))}",
+            ]
+        )
+        for warning in label_report.get("warnings", []):
+            lines.append(f"  - {warning}")
+        lines.append("")
+    if "split_diagnostics" in summary:
+        split_report = summary["split_diagnostics"]
+        lines.extend(["## Split Diagnostics", ""])
+        for strategy in split_report.get("strategies", []):
+            counts = ", ".join(f"{name}={count}" for name, count in sorted(strategy.get("counts", {}).items()))
+            lines.append(f"- {strategy.get('strategy')}: {counts}")
+        lines.append(f"- Warnings: {len(split_report.get('warnings', []))}")
+        for warning in split_report.get("warnings", []):
+            lines.append(f"  - {warning}")
+        lines.append("")
+    lines.extend(
+        [
+            "## Generated Files",
+            "",
+            f"- Prompts: `{summary['prompts_path']}`",
+            f"- Splits: `{summary['splits_path']}`",
+            f"- Backend config stub: `{summary['backend_config_path']}`",
+            f"- Artifact manifest stub: `{summary['artifact_manifest_path']}`",
+            "",
+            "## What Sarf Still Does Not Do",
+            "",
+            "Sarf v0.4 does not train probes, run models, extract hidden states, run model inference, or claim paper reproduction. It prepares and validates the workflow structure around those steps.",
+            "",
+        ]
+    )
     return "\n".join(lines)
