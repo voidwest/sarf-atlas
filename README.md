@@ -1,9 +1,9 @@
 # Sarf Atlas
 
 Sarf is a backend-agnostic research framework for Arabic morphology probing
-experiments. It organizes datasets, prompts, splits, extraction metadata, and
-evaluation artifacts, and is designed to let hidden states or logits come from
-Ember, llama.cpp, Transformers, or precomputed files.
+experiments. It organizes datasets, prompts, splits, experiment configs,
+extraction metadata, and evaluation artifacts, and is designed to let hidden
+states or logits come from Ember, llama.cpp, Transformers, or precomputed files.
 
 Architecture slogan:
 
@@ -39,7 +39,7 @@ Install Sarf Atlas:
 pip install sarf-atlas
 ```
 
-Create a v0.2 project layout:
+Create a project layout:
 
 ```bash
 sarf init --out-dir /tmp/sarf-atlas-project --name sarf-atlas-project
@@ -63,6 +63,24 @@ placeholders, a Sarf artifact manifest, and an example workflow manifest. It is
 framework scaffolding only, not hidden-state extraction, Paper 1 reproduction,
 or research output. See `docs/CLI.md` for the backend capability matrix.
 
+## Paper-Style Workflow Preparation
+
+Sarf v0.3 adds commands for realistic Arabic morphology experiment preparation:
+
+```bash
+sarf validate-dataset examples/paper_style_morphology.jsonl
+sarf make-prompts examples/paper_style_experiment.toml --out /tmp/sarf-v03/prompts.jsonl
+sarf make-splits examples/paper_style_experiment.toml --out /tmp/sarf-v03/splits.json
+sarf make-experiment examples/paper_style_experiment.toml --out /tmp/sarf-v03/run
+sarf report /tmp/sarf-v03/run --out /tmp/sarf-v03/report.md
+```
+
+This supports dataset rows, prompt construction, label fields,
+lemma-heldout/root-heldout split metadata, character-baseline metadata
+placeholders, backend config stubs, artifact import, and report scaffolding.
+Sarf v0.3 does not train probes, run models, extract hidden states, or claim
+paper reproduction.
+
 Current adapter namespace:
 
 - `sarf.backends.ember`
@@ -74,7 +92,7 @@ precomputed hidden-state formats.
 
 ## Optional Backends
 
-Sarf v0.2 can inspect local backend availability, but detection is optional and
+Sarf v0.3 can inspect local backend availability, but detection is optional and
 does not make llama.cpp, Ember, Transformers/HF, or hidden-state extraction part
 of the base package:
 

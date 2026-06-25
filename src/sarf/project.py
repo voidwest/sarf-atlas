@@ -32,7 +32,7 @@ def init_project(out_dir: str | Path, *, name: str = "sarf-project", force: bool
     project = {
         "schema_version": PROJECT_SCHEMA_VERSION,
         "name": name,
-        "sarf_version": "0.2",
+        "sarf_version": "0.3",
         "layout": {
             "data_raw": "data/raw",
             "data_processed": "data/processed",
@@ -56,7 +56,7 @@ def init_project(out_dir: str | Path, *, name: str = "sarf-project", force: bool
     if force or not readme.exists():
         readme.write_text(
             f"# {name}\n\n"
-            "Sarf v0.2 project layout for Arabic morphology probing artifacts.\n\n"
+            "Sarf v0.3 project layout for Arabic morphology probing artifacts.\n\n"
             "- Put source datasets in `data/raw/`.\n"
             "- Write normalized records to `data/processed/`.\n"
             "- Store rendered prompt JSONL in `prompts/`.\n"
@@ -67,4 +67,3 @@ def init_project(out_dir: str | Path, *, name: str = "sarf-project", force: bool
         )
 
     return project
-

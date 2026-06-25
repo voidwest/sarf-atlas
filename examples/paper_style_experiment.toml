@@ -1,0 +1,23 @@
+[experiment]
+run_id = "paper-style-demo"
+
+[dataset]
+path = "paper_style_morphology.jsonl"
+
+[prompts]
+template = "حلل صرفيا الكلمة العربية: {surface}."
+position_policy = "prompt_final"
+
+[labels]
+targets = ["pos", "gender", "number", "root", "lemma", "abstract_pattern"]
+
+[splits]
+strategies = ["lemma_heldout", "root_heldout"]
+test_fraction = 0.25
+seed = 42
+
+[backend]
+name = "native"
+architecture = "qwen3"
+model_path = "/path/to/model.gguf"
+tokenizer_path = "/path/to/tokenizer.json"

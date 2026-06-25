@@ -5,7 +5,14 @@ import json
 from pathlib import Path
 import sys
 
+from .dataset import validate_dataset_rows
 from .ember_config import write_ember_config
+from .experiment import (
+    make_prompts_from_experiment,
+    make_splits_from_experiment,
+    render_experiment_markdown,
+    write_experiment_scaffold,
+)
 from .io import read_jsonl, write_json, write_jsonl
 from .prompts import make_prompts
 from .project import init_project
@@ -101,7 +108,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p = sub.add_parser("init", help="create a clean Sarf v0.2 project layout")
+    p = sub.add_parser("init", help="create a clean Sarf v0.3 project layout")
     p.add_argument("path", nargs="?", help="project directory to create or update")
     p.add_argument("--out-dir", default=".", help="project directory to create or update")
     p.add_argument("--name", default="sarf-project", help="project name written to sarf.project.json")
@@ -110,10 +117,27 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("toy-dataset", help="write the bundled toy morphology dataset")
     p.add_argument("--out", required=True, help="output JSONL path")
 
-    p = sub.add_parser("make-prompts", help="render prompt JSONL from morphology records")
-    p.add_argument("--input", required=True, help="input morphology JSONL")
+    p = sub.add_parser("validate-dataset", help="validate a Paper-style morphology JSONL dataset")
+    p.add_argument("input", help="input morphology JSONL")
+    p.add_argument("--out", help="optional validation report JSON")
+
+    p = sub.add_parser("make-prompts", help="render prompt JSONL from records or an experiment TOML")
+    p.add_argument("experiment", nargs="?", help="experiment TOML")
+    p.add_argument("--input", help="input morphology JSONL")
     p.add_argument("--out", required=True, help="output prompt JSONL")
     p.add_argument("--template", default=DEFAULT_TEMPLATE, help="Python format prompt template")
+
+    p = sub.add_parser("make-splits", help="write Paper-style split metadata from an experiment TOML")
+    p.add_argument("experiment", help="experiment TOML")
+    p.add_argument("--out", required=True, help="output split metadata JSON")
+
+    p = sub.add_parser("make-experiment", help="write a Paper-style experiment scaffold from TOML")
+    p.add_argument("experiment", help="experiment TOML")
+    p.add_argument("--out", required=True, help="output run directory")
+
+    p = sub.add_parser("report", help="write a readable experiment report")
+    p.add_argument("run_dir", help="experiment run directory")
+    p.add_argument("--out", required=True, help="output Markdown report path")
 
     p = sub.add_parser("split-metadata", help="assign toy lemma-heldout splits and metadata")
     p.add_argument("--input", required=True, help="input morphology JSONL")
@@ -192,8 +216,31 @@ def main(argv: list[str] | None = None) -> int:
         init_project(args.path or args.out_dir, name=args.name, force=args.force)
     elif args.command == "toy-dataset":
         write_jsonl(args.out, toy_records())
+    elif args.command == "validate-dataset":
+        report = validate_dataset_rows(read_jsonl(args.input))
+        if args.out:
+            write_json(args.out, report)
+        else:
+            print(json.dumps(report, ensure_ascii=False, indent=2))
+        return 0 if report["passed"] else 1
     elif args.command == "make-prompts":
-        write_jsonl(args.out, make_prompts(read_jsonl(args.input), args.template))
+        if args.experiment:
+            write_jsonl(args.out, make_prompts_from_experiment(args.experiment))
+        elif args.input:
+            write_jsonl(args.out, make_prompts(read_jsonl(args.input), args.template))
+        else:
+            raise ValueError("make-prompts requires an experiment TOML or --input")
+    elif args.command == "make-splits":
+        write_json(args.out, make_splits_from_experiment(args.experiment))
+    elif args.command == "make-experiment":
+        write_experiment_scaffold(args.experiment, args.out)
+    elif args.command == "report":
+        summary_path = Path(args.run_dir) / "experiment.summary.json"
+        if not summary_path.exists():
+            raise ValueError(f"missing experiment summary: {summary_path}")
+        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.out).write_text(render_experiment_markdown(summary), encoding="utf-8")
     elif args.command == "split-metadata":
         records, metadata = lemma_heldout_split(read_jsonl(args.input))
         write_jsonl(args.out_records, records)

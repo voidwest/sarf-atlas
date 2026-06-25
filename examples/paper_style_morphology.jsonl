@@ -1,0 +1,4 @@
+{"id":"sample-0001","surface":"كتب","lemma":"كتب","root":"ك ت ب","pos":"VERB","abstract_pattern":"فعل","concrete_pattern":"كتب","gender":null,"number":null,"features":{"aspect":"perf","person":"3"}}
+{"id":"sample-0002","surface":"كاتبة","lemma":"كاتب","root":"ك ت ب","pos":"NOUN","abstract_pattern":"فاعل","concrete_pattern":"كاتبة","gender":"fem","number":"sg","features":{}}
+{"id":"sample-0003","surface":"مدرسون","lemma":"مدرس","root":"د ر س","pos":"NOUN","abstract_pattern":"مفعل","concrete_pattern":"مدرسون","gender":"masc","number":"pl","features":{}}
+{"id":"sample-0004","surface":"درس","lemma":"درس","root":"د ر س","pos":"VERB","abstract_pattern":"فعل","concrete_pattern":"درس","gender":null,"number":null,"features":{"aspect":"perf","person":"3"}}
