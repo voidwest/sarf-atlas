@@ -68,10 +68,10 @@ or research output. See `docs/CLI.md` for the backend capability matrix.
 Sarf v0.3 adds commands for realistic Arabic morphology experiment preparation:
 
 ```bash
-sarf validate-dataset examples/paper_style_morphology.jsonl
-sarf make-prompts examples/paper_style_experiment.toml --out /tmp/sarf-v03/prompts.jsonl
-sarf make-splits examples/paper_style_experiment.toml --out /tmp/sarf-v03/splits.json
-sarf make-experiment examples/paper_style_experiment.toml --out /tmp/sarf-v03/run
+sarf validate-dataset examples/paper_style/tiny_morphology.jsonl
+sarf make-prompts examples/paper_style/experiment.toml --out /tmp/sarf-v03/prompts.jsonl
+sarf make-splits examples/paper_style/experiment.toml --out /tmp/sarf-v03/splits.json
+sarf make-experiment examples/paper_style/experiment.toml --out /tmp/sarf-v03/run
 sarf report /tmp/sarf-v03/run --out /tmp/sarf-v03/report.md
 ```
 

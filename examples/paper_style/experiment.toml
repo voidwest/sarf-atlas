@@ -2,7 +2,7 @@
 run_id = "paper-style-demo"
 
 [dataset]
-path = "paper_style_morphology.jsonl"
+path = "tiny_morphology.jsonl"
 
 [prompts]
 template = "حلل صرفيا الكلمة العربية: {surface}."

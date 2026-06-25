@@ -139,6 +139,7 @@ class V03CliTests(unittest.TestCase):
             self.assertTrue((run_dir / "split_metadata.json").is_file())
             self.assertTrue((run_dir / "backend.placeholder.toml").is_file())
             self.assertTrue((run_dir / "artifact_manifest.placeholder.json").is_file())
+            self.assertTrue((run_dir / "summary.json").is_file())
             self.assertTrue((run_dir / "experiment.summary.json").is_file())
 
             self.run_cli(["report", str(run_dir), "--out", str(report)])
@@ -175,4 +176,3 @@ class V03CliTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

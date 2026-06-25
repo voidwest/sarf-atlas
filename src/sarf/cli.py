@@ -235,7 +235,9 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "make-experiment":
         write_experiment_scaffold(args.experiment, args.out)
     elif args.command == "report":
-        summary_path = Path(args.run_dir) / "experiment.summary.json"
+        summary_path = Path(args.run_dir) / "summary.json"
+        if not summary_path.exists():
+            summary_path = Path(args.run_dir) / "experiment.summary.json"
         if not summary_path.exists():
             raise ValueError(f"missing experiment summary: {summary_path}")
         summary = json.loads(summary_path.read_text(encoding="utf-8"))

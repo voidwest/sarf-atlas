@@ -101,16 +101,16 @@ belongs; it does not run baselines.
 
 The repository includes:
 
-- `examples/paper_style_morphology.jsonl`
-- `examples/paper_style_experiment.toml`
+- `examples/paper_style/tiny_morphology.jsonl`
+- `examples/paper_style/experiment.toml`
 
 Run:
 
 ```bash
-sarf validate-dataset examples/paper_style_morphology.jsonl
-sarf make-prompts examples/paper_style_experiment.toml --out /tmp/sarf-v03/prompts.jsonl
-sarf make-splits examples/paper_style_experiment.toml --out /tmp/sarf-v03/splits.json
-sarf make-experiment examples/paper_style_experiment.toml --out /tmp/sarf-v03/run
+sarf validate-dataset examples/paper_style/tiny_morphology.jsonl
+sarf make-prompts examples/paper_style/experiment.toml --out /tmp/sarf-v03/prompts.jsonl
+sarf make-splits examples/paper_style/experiment.toml --out /tmp/sarf-v03/splits.json
+sarf make-experiment examples/paper_style/experiment.toml --out /tmp/sarf-v03/run
 sarf report /tmp/sarf-v03/run --out /tmp/sarf-v03/report.md
 ```
 
@@ -143,4 +143,3 @@ Sarf v0.3 does not:
 - Extract hidden states
 - Compile llama.cpp
 - Claim Paper 1 reproduction
-

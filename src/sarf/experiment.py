@@ -143,6 +143,7 @@ def write_experiment_scaffold(config_path: str | Path, out_dir: str | Path) -> d
         ],
     }
     report_path.write_text(render_experiment_markdown(summary), encoding="utf-8")
+    write_json(out / "summary.json", summary)
     write_json(out / "experiment.summary.json", summary)
     return summary
 
@@ -171,4 +172,3 @@ def render_experiment_markdown(summary: dict[str, Any]) -> str:
         "",
     ]
     return "\n".join(lines)
-
