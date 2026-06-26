@@ -57,16 +57,21 @@ jobs:
     permissions:
       id-token: write
 
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist/
-
+steps:
       - uses: actions/checkout@v4
 
-      - name: Require license before publishing
+- name: Require license before publishing
         run: test -f LICENSE -o -f LICENSE.md
 
-      - name: Publish to PyPI
+- uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+- name: List distributions
+        run: ls -la dist
+
+- name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
         uses: pypa/gh-action-pypi-publish@release/v1
