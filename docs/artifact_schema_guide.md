@@ -1,8 +1,8 @@
 # Sarf Schema Guide
 
-Sarf v0.8 prepares the schemas that should become stable in v1.0. JSON outputs
-keep their historical string `schema` names where they already existed, and add
-numeric `schema_version` fields for compatibility checks.
+Sarf Atlas 1.0 uses numeric `schema_version` fields for compatibility checks.
+JSON outputs keep their historical string `schema` names where they already
+existed.
 
 ## Artifact Manifest V1
 
@@ -29,7 +29,8 @@ Produced by `sarf import-artifacts`.
 ```
 
 Required fields: `schema_version`, `run_id`, `backend.name`,
-`backend.adapter`, and `prompts_path`.
+`backend.adapter`, and `prompts_path`. `schema_version` must be `1`; Sarf
+manifest validation reports an error for unsupported manifest schema versions.
 
 ## Dataset Row V1
 

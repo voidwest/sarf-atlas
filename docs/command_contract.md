@@ -1,8 +1,8 @@
-# Sarf CLI Contract Prep
+# Sarf CLI Contract
 
-This document records the v0.8 command-surface decision before the v1.0
-contract freeze. A stable command means Sarf should not casually rename it,
-remove required arguments, or change output schemas after 1.0.
+This document records the Sarf Atlas 1.0 command-surface decision. A stable
+command means Sarf should not casually rename it, remove required arguments, or
+change output schemas after 1.0.
 
 ## Stable For 1.0
 

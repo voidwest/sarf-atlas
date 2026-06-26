@@ -10,7 +10,7 @@ Backends extract.
 Auditors compare.
 ```
 
-Current local package version: `0.9.0`.
+Current package version: `1.0.0`.
 Latest previously verified PyPI release: `sarf-atlas==0.4.0`.
 
 ## What Sarf Is
@@ -82,7 +82,7 @@ comparison, and report output with deterministic toy data.
 
 ## Stable CLI Surface
 
-The v0.8 contract-freeze prep classifies the public commands in
+The 1.0 command contract classifies the public commands in
 `docs/command_contract.md`.
 
 Stable-track commands include:
@@ -109,9 +109,9 @@ depend on optional local tools.
 
 ## Schemas
 
-The v1 schema prep is documented in `docs/artifact_schema_guide.md`.
+The schema v1 contract is documented in `docs/artifact_schema_guide.md`.
 
-Frozen-prep contracts:
+Stable contracts:
 
 - Artifact manifest schema v1.
 - Dataset row schema v1.

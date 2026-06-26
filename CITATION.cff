@@ -3,7 +3,7 @@ message: "If you use Sarf Atlas, please cite the repository release you used."
 title: "Sarf Atlas"
 authors:
   - name: "Sarf Atlas contributors"
-version: "0.9.0"
+version: "1.0.0"
 date-released: "2026-06-26"
 url: "https://github.com/voidwest/sarf-atlas"
 repository-code: "https://github.com/voidwest/sarf-atlas"

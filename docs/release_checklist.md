@@ -1,7 +1,6 @@
 # Release Checklist
 
-Use this checklist for the v0.9 release-candidate pass and the final v1.0
-release.
+Use this checklist for the final v1.0 release prep and publication pass.
 
 ## Required Before Publishing
 

@@ -2,6 +2,33 @@
 
 ## Unreleased
 
+## v1.0.0
+
+First stable Sarf Atlas release.
+
+- Stabilized the core CLI contract for the workflow layer around Arabic
+  morphology probing experiments.
+- Documented stable, experimental, deprecated, and legacy commands.
+- Documented schema-versioned artifacts, including artifact manifests, dataset
+  validation reports, split metadata, tokenization diagnostics, baseline
+  results, and experiment summaries.
+- Kept artifact manifest schema enforcement at `schema_version = 1`.
+- Included dataset and split diagnostics for leakage-aware experiment setup.
+- Included backend-agnostic tokenization diagnostics for Arabic morphology rows
+  and optional backend token-count artifacts.
+- Included lightweight baseline scaffolding and standard-library
+  majority/character n-gram baseline artifacts.
+- Included backend artifact import, manifest validation, and run
+  summarization.
+- Included tiny examples, Paper-style workflow docs, backend docs, schema docs,
+  and release docs.
+- Added MIT licensing, citation metadata, contribution docs, issue templates,
+  and GitHub Actions build/release workflow.
+
+Base Sarf Atlas 1.0.0 does not run model inference, extract hidden states,
+train probes, vendor inference backends, or claim full Paper 1 reproduction from
+raw models.
+
 ### v0.9.0 Release-Candidate Prep
 
 - Reworked top-level docs around the 1.0 public surface.

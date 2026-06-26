@@ -5,7 +5,7 @@ for label diagnostics, leakage-aware split summaries, probe config scaffolds,
 baseline config scaffolds, optional lightweight baseline runners, and Markdown
 reports.
 
-For the v0.8 contract-freeze decision table, see
+For the 1.0 command contract decision table, see
 `docs/command_contract.md`. For JSON artifact examples and schema v1 notes, see
 `docs/artifact_schema_guide.md`.
 
