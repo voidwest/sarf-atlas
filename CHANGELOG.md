@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## v1.0.1
+
+- Fixed `toy.py` import ordering: moved `from .schemas import MorphologyRecord`
+  to the top of the file.
+- Updated stale version references from 0.4.0 to 1.0.0 in `ROADMAP.md` and
+  `professor_packet/repo_links.md`.
+
 ## v1.0.0
 
 First stable Sarf Atlas release.
