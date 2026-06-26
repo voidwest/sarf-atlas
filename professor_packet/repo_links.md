@@ -34,7 +34,7 @@ pip install sarf-atlas
 Latest verified PyPI release:
 
 ```text
-sarf-atlas==0.4.0
+sarf-atlas==1.0.0
 ```
 
 ## Relevant Local Files

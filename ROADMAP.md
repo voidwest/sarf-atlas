@@ -5,7 +5,7 @@ probing, evaluation, and intervention work.
 
 ## Package Status
 
-- Current PyPI release: `sarf-atlas==0.4.0`.
+- Current PyPI release: `sarf-atlas==1.0.0`.
 - Current local implementation focus: v1.0 release prep. The command surface,
   schema examples, compatibility policy, docs, tests, CI, and packaging
   metadata are aligned for the first stable release.

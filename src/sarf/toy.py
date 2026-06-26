@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from .schemas import MorphologyRecord
+
 
 TOY_RECORDS: list[dict[str, str]] = [
     {
@@ -73,4 +75,3 @@ TOY_RECORDS: list[dict[str, str]] = [
 
 def toy_records() -> list[dict[str, str]]:
     return [MorphologyRecord.from_mapping(record).to_dict() for record in TOY_RECORDS]
-from .schemas import MorphologyRecord
