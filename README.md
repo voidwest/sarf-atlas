@@ -13,6 +13,17 @@ Backends extract.
 Auditors compare.
 ```
 
+Current package status:
+
+- Latest verified PyPI release: `sarf-atlas==0.4.0`.
+- Active roadmap: v0.5 optional baseline runners, v0.6 Paper 1-style
+  reproduction example, v0.7 tokenization diagnostics, and v1.0 stable
+  CLI/artifact contract.
+- Roadmap issues: [v0.5](https://github.com/voidwest/sarf-atlas/issues/1),
+  [v0.6](https://github.com/voidwest/sarf-atlas/issues/4),
+  [v0.7](https://github.com/voidwest/sarf-atlas/issues/2),
+  [v1.0](https://github.com/voidwest/sarf-atlas/issues/3).
+
 Sarf Atlas is not replacing Ember. Ember is currently the strongest local
 backend path, but Sarf should not depend on one inference engine. Sarf owns
 Arabic morphology schemas, task definitions, prompt templates, split

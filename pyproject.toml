@@ -21,6 +21,11 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 
+[project.urls]
+Homepage = "https://github.com/voidwest/sarf-atlas"
+Roadmap = "https://github.com/voidwest/sarf-atlas/blob/main/ROADMAP.md"
+Issues = "https://github.com/voidwest/sarf-atlas/issues"
+
 [project.scripts]
 sarf = "sarf.cli:entrypoint"
 
