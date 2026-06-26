@@ -11,6 +11,10 @@ from .prompts import make_prompts
 from .splits import heldout_split
 
 
+SPLIT_METADATA_SCHEMA_VERSION = 1
+EXPERIMENT_SUMMARY_SCHEMA_VERSION = 1
+
+
 def read_experiment_config(path: str | Path) -> dict[str, Any]:
     return tomllib.loads(Path(path).read_text(encoding="utf-8"))
 
@@ -69,6 +73,7 @@ def make_splits_from_experiment(config_path: str | Path) -> dict[str, Any]:
     options = split_config(config)
     return {
         "schema": "sarf_split_metadata_v0_4",
+        "schema_version": SPLIT_METADATA_SCHEMA_VERSION,
         "strategies": [
             heldout_split(rows, strategy=strategy, test_fraction=options["test_fraction"], seed=options["seed"])
             for strategy in options["strategies"]
@@ -131,6 +136,7 @@ def write_experiment_scaffold(config_path: str | Path, out_dir: str | Path) -> d
     )
 
     summary = {
+        "schema_version": EXPERIMENT_SUMMARY_SCHEMA_VERSION,
         "run_id": run_id,
         "dataset": str(dataset_path_from_config(config, config_path=config_path)),
         "dataset_validation": validation,
@@ -200,7 +206,7 @@ def render_experiment_markdown(summary: dict[str, Any]) -> str:
             "",
             "## What Sarf Still Does Not Do",
             "",
-            "Sarf v0.4 does not train probes, run models, extract hidden states, run model inference, or claim paper reproduction. It prepares and validates the workflow structure around those steps.",
+            "Sarf does not train probes, run models, extract hidden states, run model inference, or claim paper reproduction. It prepares and validates the workflow structure around those steps.",
             "",
         ]
     )

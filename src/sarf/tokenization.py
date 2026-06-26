@@ -17,6 +17,7 @@ DIACRITIC_RANGES = (
 )
 ALEF_VARIANTS = {"أ", "إ", "آ", "ٱ"}
 MORPH_BOUNDARY_CHARS = {"و", "ف", "ب", "ك", "ل", "س"}
+TOKENIZATION_DIAGNOSTICS_SCHEMA_VERSION = 1
 
 
 def _is_diacritic(char: str) -> bool:
@@ -164,6 +165,7 @@ def tokenization_diagnostics(
 
     return {
         "schema": "sarf_tokenization_diagnostics_v0_7",
+        "schema_version": TOKENIZATION_DIAGNOSTICS_SCHEMA_VERSION,
         "source": source,
         "row_count": len(rows),
         "tokenization_artifact": primary_artifact["path"] if primary_artifact else None,

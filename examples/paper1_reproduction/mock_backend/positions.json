@@ -1,5 +1,6 @@
 {
   "schema": "sarf_mock_positions_v0_6",
+  "schema_version": 1,
   "run_id": "paper1-style-demo",
   "position_policy": "prompt_final",
   "not_research_output": true,

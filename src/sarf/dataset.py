@@ -6,6 +6,8 @@ from typing import Any, Iterable
 
 REQUIRED_FIELDS = ["id", "surface", "lemma", "root", "pos", "abstract_pattern", "concrete_pattern"]
 OPTIONAL_LABEL_FIELDS = ["gender", "number"]
+DATASET_ROW_SCHEMA_VERSION = 1
+DATASET_VALIDATION_SCHEMA_VERSION = 1
 
 
 def normalize_record(row: dict[str, Any]) -> dict[str, Any]:
@@ -50,6 +52,8 @@ def validate_dataset_rows(rows: Iterable[dict[str, Any]]) -> dict[str, Any]:
     failing = [row for row in row_reports if not row["passed"]]
     return {
         "schema": "sarf_morphology_dataset_v0_4",
+        "schema_version": DATASET_VALIDATION_SCHEMA_VERSION,
+        "dataset_row_schema_version": DATASET_ROW_SCHEMA_VERSION,
         "passed": not failing and row_count > 0,
         "row_count": row_count,
         "failed_row_count": len(failing),

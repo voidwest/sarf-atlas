@@ -5,6 +5,9 @@ import random
 from typing import Any, Iterable
 
 
+SPLIT_METADATA_SCHEMA_VERSION = 1
+
+
 def lemma_heldout_split(records: Iterable[dict[str, Any]]) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for record in records:
@@ -25,6 +28,7 @@ def lemma_heldout_split(records: Iterable[dict[str, Any]]) -> tuple[list[dict[st
         counts[row["split"]] += 1
 
     metadata = {
+        "schema_version": SPLIT_METADATA_SCHEMA_VERSION,
         "strategy": "lemma_round_robin_heldout",
         "unit": "lemma",
         "toy": True,
@@ -68,6 +72,7 @@ def heldout_split(
             counts[split] += 1
 
     return {
+        "schema_version": SPLIT_METADATA_SCHEMA_VERSION,
         "strategy": strategy,
         "unit": unit,
         "seed": seed,
@@ -77,7 +82,7 @@ def heldout_split(
         "rows": rows,
         "char_baseline_metadata": {
             "status": "placeholder",
-            "notes": "Sarf v0.4 records where character-baseline metadata belongs; it does not run baselines.",
+            "notes": "Sarf records where character-baseline metadata belongs; use run-baseline for lightweight baselines.",
         },
         "not_research_output": True,
     }

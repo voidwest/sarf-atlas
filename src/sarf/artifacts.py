@@ -48,6 +48,11 @@ class SarfArtifactManifest:
 def validate_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
     required = ["schema_version", "run_id", "backend", "prompts_path"]
     missing = [key for key in required if key not in manifest]
+    errors = []
+    if "schema_version" in manifest and manifest.get("schema_version") != SARF_ARTIFACT_CONTRACT_VERSION:
+        errors.append(
+            f"unsupported schema_version {manifest.get('schema_version')}; expected {SARF_ARTIFACT_CONTRACT_VERSION}"
+        )
     backend = manifest.get("backend")
     if not isinstance(backend, dict):
         missing.append("backend.name")
@@ -69,8 +74,9 @@ def validate_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
             status["exists"] = Path(value).exists() if not status["placeholder"] else False
         artifact_paths[key] = status
     return {
-        "passed": not missing,
+        "passed": not missing and not errors,
         "missing": missing,
+        "errors": errors,
         "schema_version": manifest.get("schema_version"),
         "not_research_output": manifest.get("not_research_output"),
         "artifact_paths": artifact_paths,

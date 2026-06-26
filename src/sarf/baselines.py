@@ -18,6 +18,7 @@ from .io import read_jsonl, write_json
 BASELINE_CONFIG_SCHEMA = "sarf_baseline_config_v0_5"
 BASELINE_RESULTS_SCHEMA = "sarf_baseline_results_v0_5"
 BASELINE_SUMMARY_SCHEMA = "sarf_baseline_summary_v0_5"
+BASELINE_ARTIFACT_SCHEMA_VERSION = 1
 
 SUPPORTED_BASELINES = {
     "char_ngram",
@@ -224,6 +225,7 @@ def run_baseline(
 
     result = {
         "schema": BASELINE_RESULTS_SCHEMA,
+        "schema_version": BASELINE_ARTIFACT_SCHEMA_VERSION,
         "baseline": baseline_name,
         "baseline_config": str(baseline_config_path),
         "experiment": str(experiment_path),
@@ -249,6 +251,7 @@ def summarize_baseline(path: str | Path) -> dict[str, Any]:
                 labels[label].append(float(accuracy))
     return {
         "schema": BASELINE_SUMMARY_SCHEMA,
+        "schema_version": BASELINE_ARTIFACT_SCHEMA_VERSION,
         "baseline": payload.get("baseline"),
         "dependency_status": payload.get("dependency_status", {}),
         "strategy_count": len(payload.get("strategies", [])),

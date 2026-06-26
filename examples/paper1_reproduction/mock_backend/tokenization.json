@@ -1,5 +1,6 @@
 {
   "schema": "sarf_mock_tokenization_v0_6",
+  "schema_version": 1,
   "run_id": "paper1-style-demo",
   "not_research_output": true,
   "samples": [

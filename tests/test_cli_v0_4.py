@@ -169,6 +169,7 @@ class V04CliTests(unittest.TestCase):
             self.assertIn("Tokenization diagnostics", output)
             token_payload = json.loads(token_json.read_text(encoding="utf-8"))
             self.assertEqual(token_payload["schema"], "sarf_tokenization_diagnostics_v0_7")
+            self.assertEqual(token_payload["schema_version"], 1)
             self.assertTrue(
                 any("no backend tokenization artifact supplied" in warning for warning in token_payload["warnings"])
             )
@@ -205,6 +206,7 @@ class V04CliTests(unittest.TestCase):
             self.assertIn("wrote", output)
             baseline_payload = json.loads(baseline_results.read_text(encoding="utf-8"))
             self.assertEqual(baseline_payload["schema"], "sarf_baseline_results_v0_5")
+            self.assertEqual(baseline_payload["schema_version"], 1)
             self.assertEqual(baseline_payload["baseline"], "char_ngram")
             self.assertEqual(baseline_payload["dependency_status"]["optional_modules"], [])
             self.assertIn("lemma_heldout", [item["strategy"] for item in baseline_payload["strategies"]])
@@ -213,6 +215,7 @@ class V04CliTests(unittest.TestCase):
             self.assertEqual(output, "")
             summary_payload = json.loads(baseline_summary.read_text(encoding="utf-8"))
             self.assertEqual(summary_payload["schema"], "sarf_baseline_summary_v0_5")
+            self.assertEqual(summary_payload["schema_version"], 1)
             self.assertTrue(summary_payload["dependency_status"]["available"])
             self.assertIn("pos", summary_payload["target_labels"])
 

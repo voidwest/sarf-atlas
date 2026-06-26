@@ -1,7 +1,9 @@
 {
   "schema": "sarf_split_metadata_v0_4",
+  "schema_version": 1,
   "strategies": [
     {
+      "schema_version": 1,
       "strategy": "lemma_heldout",
       "unit": "lemma",
       "seed": 42,
@@ -86,11 +88,12 @@
       ],
       "char_baseline_metadata": {
         "status": "placeholder",
-        "notes": "Sarf v0.4 records where character-baseline metadata belongs; it does not run baselines."
+        "notes": "Sarf records where character-baseline metadata belongs; use run-baseline for lightweight baselines."
       },
       "not_research_output": true
     },
     {
+      "schema_version": 1,
       "strategy": "root_heldout",
       "unit": "root",
       "seed": 42,
@@ -173,7 +176,7 @@
       ],
       "char_baseline_metadata": {
         "status": "placeholder",
-        "notes": "Sarf v0.4 records where character-baseline metadata belongs; it does not run baselines."
+        "notes": "Sarf records where character-baseline metadata belongs; use run-baseline for lightweight baselines."
       },
       "not_research_output": true
     }

@@ -109,6 +109,8 @@ class V03CliTests(unittest.TestCase):
             output = self.run_cli(["validate-dataset", str(dataset)])
             report = json.loads(output)
             self.assertTrue(report["passed"])
+            self.assertEqual(report["schema_version"], 1)
+            self.assertEqual(report["dataset_row_schema_version"], 1)
             self.assertEqual(report["row_count"], 3)
             self.assertIn("abstract_pattern", report["required_fields"])
             self.assertEqual(report["optional_null_counts"]["gender"], 2)
@@ -130,7 +132,9 @@ class V03CliTests(unittest.TestCase):
 
             self.run_cli(["make-splits", str(config), "--out", str(splits)])
             split_payload = json.loads(splits.read_text(encoding="utf-8"))
+            self.assertEqual(split_payload["schema_version"], 1)
             self.assertEqual([item["strategy"] for item in split_payload["strategies"]], ["lemma_heldout", "root_heldout"])
+            self.assertEqual(split_payload["strategies"][0]["schema_version"], 1)
             self.assertEqual(split_payload["seed"], 7)
             self.assertEqual(split_payload["strategies"][0]["char_baseline_metadata"]["status"], "placeholder")
 
@@ -172,6 +176,33 @@ class V03CliTests(unittest.TestCase):
             self.assertTrue(report["passed"])
             self.assertTrue(report["artifact_paths"]["prompts_path"]["exists"])
             self.assertFalse(report["artifact_paths"]["hidden_states_path"]["present"])
+
+    def test_manifest_validation_rejects_wrong_schema_version(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            prompts = root / "prompts.jsonl"
+            prompts.write_text('{"id":"p1","prompt":"x"}\n', encoding="utf-8")
+            manifest = root / "manifest.json"
+            manifest.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 999,
+                        "run_id": "bad-version",
+                        "backend": {"name": "files", "adapter": "sarf.backends.files"},
+                        "prompts_path": str(prompts),
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            buffer = io.StringIO()
+            with patch.dict("os.environ", {"PATH": ""}, clear=True), redirect_stdout(buffer):
+                exit_code = main(["validate-manifest", "--manifest", str(manifest)])
+            self.assertEqual(exit_code, 1)
+            output = buffer.getvalue()
+            report = json.loads(output)
+            self.assertFalse(report["passed"])
+            self.assertIn("unsupported schema_version", report["errors"][0])
 
 
 if __name__ == "__main__":

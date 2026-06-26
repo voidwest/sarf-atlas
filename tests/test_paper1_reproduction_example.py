@@ -155,11 +155,13 @@ class Paper1ReproductionExampleTests(unittest.TestCase):
 
             tokenization_payload = json.loads(tokenization_diagnostics.read_text(encoding="utf-8"))
             self.assertEqual(tokenization_payload["schema"], "sarf_tokenization_diagnostics_v0_7")
+            self.assertEqual(tokenization_payload["schema_version"], 1)
             self.assertEqual(tokenization_payload["summary"]["mean_artifact_token_count"], 2.75)
             self.assertEqual(len(tokenization_payload["artifact_comparisons"]), 2)
             self.assertFalse(tokenization_payload["backend_checks"]["checked"])
 
             artifact_payload = json.loads(artifact_summary.read_text(encoding="utf-8"))
+            self.assertEqual(artifact_payload["schema_version"], 1)
             self.assertTrue(artifact_payload["capabilities"]["has_hidden_states"])
             self.assertTrue(artifact_payload["validation"]["artifact_paths"]["hidden_states_path"]["exists"])
 

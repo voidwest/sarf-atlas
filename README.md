@@ -1,11 +1,8 @@
 # Sarf Atlas
 
-Sarf is a backend-agnostic research framework for Arabic morphology probing
-experiments. It organizes datasets, prompts, splits, experiment configs,
-extraction metadata, and evaluation artifacts, and is designed to let hidden
-states or logits come from Ember, llama.cpp, Transformers, or precomputed files.
-
-Architecture slogan:
+Sarf Atlas is a backend-agnostic workflow framework for Arabic morphology
+probing experiments. It organizes datasets, prompts, splits, diagnostics,
+backend artifact manifests, baseline comparisons, and report scaffolds.
 
 ```text
 Sarf organizes.
@@ -13,122 +10,133 @@ Backends extract.
 Auditors compare.
 ```
 
-Current package status:
+Current local package version: `0.9.0`.
+Latest previously verified PyPI release: `sarf-atlas==0.4.0`.
 
-- Latest verified PyPI release: `sarf-atlas==0.4.0`.
-- Active roadmap: v0.5 optional baseline runners, v0.6 Paper 1-style
-  reproduction example, v0.7 tokenization diagnostics, and v1.0 stable
-  CLI/artifact contract.
-- Roadmap issues: [v0.5](https://github.com/voidwest/sarf-atlas/issues/1),
-  [v0.6](https://github.com/voidwest/sarf-atlas/issues/4),
-  [v0.7](https://github.com/voidwest/sarf-atlas/issues/2),
-  [v1.0](https://github.com/voidwest/sarf-atlas/issues/3).
+## What Sarf Is
 
-Sarf Atlas is not replacing Ember. Ember is currently the strongest local
-backend path, but Sarf should not depend on one inference engine. Sarf owns
-Arabic morphology schemas, task definitions, prompt templates, split
-strategies, experiment configs, expected artifact schemas, report scaffolding,
-backend-agnostic validation, and adapters for importing backend outputs.
+- A CLI for preparing Arabic morphology probing workflows.
+- A small schema layer for morphology rows, split metadata, diagnostics, and
+  imported backend artifact manifests.
+- A backend-neutral adapter surface for Ember, llama.cpp-derived files,
+  HF/Transformers outputs, or other precomputed artifacts.
+- A place to run lightweight standard-library baselines such as majority and
+  character n-gram comparisons.
 
-Sarf does not own model execution internals, hidden-state extraction
-implementation, llama.cpp compilation as a required behavior, or Ember
-internals. Base Sarf works without local extraction backends installed.
+## What Sarf Is Not
 
-The current split is:
-
-- `ember`: one validated backend/tooling path for extraction artifacts.
-- `sarf-atlas`: Arabic morphology research workspace, paper configs, notes,
-  experiment manifests, package skeleton, and backend-agnostic workflow
-  planning.
-- `gguf-parity-tools`: validation and parity harness.
+- It is not a model inference engine.
+- It does not train probes in the base package.
+- It does not extract hidden states by itself.
+- It does not vendor Ember, llama.cpp, Transformers, or model weights.
+- It does not claim Paper 1 reproduction from toy or mock artifacts.
 
 ## Quickstart
 
-Install Sarf Atlas:
+Install from PyPI once the target release is published:
 
 ```bash
 pip install sarf-atlas
 ```
 
+For local development:
+
+```bash
+python -m pip install -e .
+```
+
 Create a project layout:
 
 ```bash
-sarf init --out-dir /tmp/sarf-atlas-project --name sarf-atlas-project
+sarf init --out-dir /tmp/sarf-demo --name demo
 ```
 
-Generate the toy workflow scaffold:
+Generate a self-contained toy workflow:
 
 ```bash
-sarf example-workflow --out-dir /tmp/sarf-atlas-example
+sarf example-workflow --out-dir /tmp/sarf-example
+sarf summarize-run --manifest /tmp/sarf-example/artifacts/imported/sarf_artifact_manifest.placeholder.json
 ```
 
-Import and summarize artifacts:
-
-```bash
-sarf import-artifacts --from files --run-id toy-run --prompts-path prompts/toy_prompts.jsonl --out artifacts/imported/toy-run.manifest.json
-sarf summarize-run --manifest artifacts/imported/toy-run.manifest.json
-```
-
-The scaffold writes toy morphology data, prompts, split metadata, Ember config
-placeholders, a Sarf artifact manifest, and an example workflow manifest. It is
-framework scaffolding only, not hidden-state extraction, Paper 1 reproduction,
-or research output. See `docs/CLI.md` for the backend capability matrix.
-
-## Evaluation-Preparation Workflow
-
-Sarf v0.4 adds evaluation-preparation diagnostics on top of the Paper-style
-workflow commands:
+When working from a source checkout, run a tiny paper-style workflow:
 
 ```bash
 sarf validate-dataset examples/paper_style/tiny_morphology.jsonl
-sarf validate-labels examples/paper_style/experiment.toml --out /tmp/sarf-v04/label_diagnostics.json
-sarf make-prompts examples/paper_style/experiment.toml --out /tmp/sarf-v04/prompts.jsonl
-sarf make-splits examples/paper_style/experiment.toml --out /tmp/sarf-v04/splits.json
-sarf summarize-splits examples/paper_style/tiny_morphology.jsonl /tmp/sarf-v04/splits.json --out /tmp/sarf-v04/split_diagnostics.json
-sarf tokenization-diagnostics examples/paper_style/experiment.toml --out /tmp/sarf-v04/tokenization_diagnostics.json
-sarf make-probe-config examples/paper_style/experiment.toml --artifact-manifest /tmp/sarf-v04/artifact_manifest.json --out /tmp/sarf-v04/probe_config.toml
-sarf make-baselines examples/paper_style/experiment.toml --out /tmp/sarf-v04/baselines
-sarf run-baseline --config /tmp/sarf-v04/baselines/char_ngram.toml --splits /tmp/sarf-v04/splits.json --out /tmp/sarf-v04/char_ngram.results.json
-sarf summarize-baseline /tmp/sarf-v04/char_ngram.results.json --out /tmp/sarf-v04/char_ngram.summary.json
-sarf make-experiment examples/paper_style/experiment.toml --out /tmp/sarf-v04/run
-sarf report /tmp/sarf-v04/run --out /tmp/sarf-v04/report.md
+sarf make-experiment examples/paper_style/experiment.toml --out /tmp/sarf-demo/run
+sarf validate-labels examples/paper_style/experiment.toml --out /tmp/sarf-demo/labels.json
+sarf summarize-splits examples/paper_style/tiny_morphology.jsonl /tmp/sarf-demo/run/split_metadata.json --out /tmp/sarf-demo/splits.json
+sarf make-baselines examples/paper_style/experiment.toml --out /tmp/sarf-demo/baselines
+sarf make-probe-config examples/paper_style/experiment.toml --out /tmp/sarf-demo/probe_config.toml
+sarf report /tmp/sarf-demo/run --out /tmp/sarf-demo/report.md
 ```
 
-This supports dataset rows, prompt construction, label fields,
-lemma-heldout/root-heldout split metadata, character-baseline metadata
-placeholders, backend config stubs, artifact import, label diagnostics, split
-diagnostics, probe config scaffolds, baseline config scaffolds, optional
-standard-library majority/character n-gram baseline artifacts, and report
-scaffolding. Sarf does not train probes, run models, extract hidden states, run
-model inference, or claim paper reproduction. See
-`docs/evaluation_diagnostics.md` for leakage and cardinality guidance.
+Run the fuller mock-backed Paper 1-style example:
 
-Baseline configs declare optional Python module requirements under
-`[dependencies].modules`. The bundled `majority` and `char_ngram` runners leave
-that list empty and require only the standard library; declared missing modules
-fail before output is written. A tiny generated baseline output example is in
-`examples/baseline_runner/`.
+```bash
+cat examples/paper1_reproduction/README.md
+```
 
-For a tiny Paper 1-style end-to-end demonstration path, see
-`examples/paper1_reproduction/README.md`. It uses bundled data and mock backend
-artifacts to exercise validation, prompts, leakage-aware diagnostics, artifact
-import, probe config generation, baseline comparison, and report output without
-claiming full Paper 1 reproduction.
+That example exercises validation, prompt generation, split diagnostics,
+tokenization diagnostics, artifact import, probe config generation, baseline
+comparison, and report output with deterministic toy data.
 
-Current adapter namespace:
+## Stable CLI Surface
 
-- `sarf.backends.ember`
-- `sarf.backends.files`
-- `sarf.backends.llama_cpp`
+The v0.8 contract-freeze prep classifies the public commands in
+`docs/command_contract.md`.
 
-Future optional adapters may cover Transformers/HF, vLLM, and additional
-precomputed hidden-state formats.
+Stable-track commands include:
+
+- `sarf init`
+- `sarf example-workflow`
+- `sarf validate-dataset`
+- `sarf make-prompts`
+- `sarf make-splits`
+- `sarf make-experiment`
+- `sarf import-artifacts`
+- `sarf summarize-run`
+- `sarf validate-labels`
+- `sarf summarize-splits`
+- `sarf make-probe-config`
+- `sarf make-baselines`
+- `sarf run-baseline`
+- `sarf summarize-baseline`
+- `sarf tokenization-diagnostics`
+- `sarf report`
+
+Backend doctor commands are intentionally marked experimental because they
+depend on optional local tools.
+
+## Schemas
+
+The v1 schema prep is documented in `docs/artifact_schema_guide.md`.
+
+Frozen-prep contracts:
+
+- Artifact manifest schema v1.
+- Dataset row schema v1.
+- Split metadata schema v1.
+- Tokenization diagnostics schema v1.
+- Baseline artifact schema v1.
+
+Important JSON outputs include numeric `schema_version` fields. Existing
+string `schema` identifiers remain for compatibility where they already
+existed.
+
+## Guides
+
+- CLI contract: `docs/command_contract.md`
+- Schema guide: `docs/artifact_schema_guide.md`
+- Paper-style workflow: `docs/paper_style_workflow.md`
+- Backend guide: `docs/backend_guide.md`
+- Diagnostics guide: `docs/evaluation_diagnostics.md`
+- Examples index: `docs/examples.md`
+- Release checklist: `docs/release_checklist.md`
+- Changelog: `CHANGELOG.md`
 
 ## Optional Backends
 
-Sarf v0.4 can inspect local backend availability, but detection is optional and
-does not make llama.cpp, Ember, Transformers/HF, or hidden-state extraction part
-of the base package:
+Sarf can inspect optional backend availability:
 
 ```bash
 sarf backends list
@@ -136,16 +144,11 @@ sarf backend llama-cpp doctor
 sarf backend ember doctor
 ```
 
-llama.cpp detection checks `LLAMA_TOKENIZE_BIN`, `LLAMA_CLI_BIN`,
-`LLAMA_SIMPLE_BIN`, and common PATH names. Default llama.cpp is useful for some
-local tokenization/logits workflows, but it should not be treated as emitting
-Sarf-compatible hidden-state artifacts.
+These checks are diagnostic only. Base Sarf stays lightweight and can still
+organize workflows and import file-based artifacts when no local backend is
+installed.
 
-Ember detection checks `EMBER_BIN`, PATH `ember`, and whether
-`ember validate-run --help` is callable when an Ember binary is found. Ember is
-optional; Sarf can still organize workflows and import artifacts from files.
+## Citation
 
-Users may bring artifacts from llama.cpp, Ember, HF/Transformers, or
-precomputed files. Hidden-state extraction is not built into base Sarf and
-requires an emitting backend such as Ember, patched llama.cpp, HF/Transformers,
-or precomputed Sarf-compatible artifacts.
+Use `CITATION.cff` for citation metadata. Sarf Atlas is released under the MIT
+License; see `LICENSE`.

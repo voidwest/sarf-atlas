@@ -6,9 +6,9 @@ probing, evaluation, and intervention work.
 ## Package Status
 
 - Current PyPI release: `sarf-atlas==0.4.0`.
-- Current local implementation focus: v0.5-v0.7 milestone support is present
-  for optional baselines, the Paper 1-style example, and tokenization
-  diagnostics. v1.0 stabilization remains the next contract-freeze step.
+- Current local implementation focus: v0.8/v0.9 release-candidate prep. The
+  command surface, schema examples, compatibility policy, docs, tests, CI, and
+  packaging metadata are being aligned for a v1.0 freeze.
 
 ## Engineering Milestones
 
@@ -20,6 +20,15 @@ probing, evaluation, and intervention work.
    ([issue #2](https://github.com/voidwest/sarf-atlas/issues/2)).
 4. v1.0: stable CLI and artifact contract
    ([issue #3](https://github.com/voidwest/sarf-atlas/issues/3)).
+
+## Release Prep Milestones
+
+5. v0.8: contract freeze prep.
+   Command stability classes, schema v1 examples, compatibility notes, and
+   deprecation policy.
+6. v0.9: release candidate.
+   README rewrite, guides, changelog, citation metadata, contribution docs,
+   examples index, CI/build workflow, and fresh-install checks.
 
 ## Research Arc
 

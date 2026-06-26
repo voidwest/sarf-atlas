@@ -5,6 +5,10 @@ for label diagnostics, leakage-aware split summaries, probe config scaffolds,
 baseline config scaffolds, optional lightweight baseline runners, and Markdown
 reports.
 
+For the v0.8 contract-freeze decision table, see
+`docs/command_contract.md`. For JSON artifact examples and schema v1 notes, see
+`docs/artifact_schema_guide.md`.
+
 ## Paper-Style Commands
 
 ```bash
@@ -142,7 +146,7 @@ sarf.project.json
 README.md
 ```
 
-`sarf example-workflow` writes the toy scaffold into that layout. For v0.4
+`sarf example-workflow` writes the toy scaffold into that layout. For
 diagnostic guidance, see `docs/evaluation_diagnostics.md`; for historical v0.3
 Paper-style examples, see `docs/v0_3_paper_workflow.md`.
 

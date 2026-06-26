@@ -16,7 +16,7 @@ DEFAULT_TEMPLATE = "حلل صرفيا الكلمة العربية: {word}"
 
 def write_example_workflow(out_dir: str | Path) -> dict[str, str]:
     out = Path(out_dir)
-    init_project(out, name="sarf-v0.4-example", force=True)
+    init_project(out, name="sarf-v0.9-example", force=True)
     records = toy_records()
     split_records, split_metadata = lemma_heldout_split(records)
     prompts = make_prompts(split_records, DEFAULT_TEMPLATE)
@@ -54,8 +54,8 @@ def write_example_workflow(out_dir: str | Path) -> dict[str, str]:
     )
     write_json(artifact_manifest_path, artifact_manifest.to_dict())
     manifest = {
-        "kind": "sarf_v0_4_example_workflow",
-        "sarf_version": "0.4",
+        "kind": "sarf_v0_9_example_workflow",
+        "sarf_version": "0.9",
         "toy": True,
         "not_research_output": True,
         "architecture": "Sarf organizes. Backends extract. Auditors compare.",

@@ -117,7 +117,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p = sub.add_parser("init", help="create a clean Sarf v0.4 project layout")
+    p = sub.add_parser("init", help="create a clean Sarf project layout")
     p.add_argument("path", nargs="?", help="project directory to create or update")
     p.add_argument("--out-dir", default=".", help="project directory to create or update")
     p.add_argument("--name", default="sarf-project", help="project name written to sarf.project.json")

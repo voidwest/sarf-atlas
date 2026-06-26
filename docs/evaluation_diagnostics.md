@@ -1,6 +1,6 @@
-# Sarf v0.4 Evaluation Diagnostics
+# Sarf Evaluation Diagnostics
 
-Sarf v0.4 prepares evaluation scaffolding for Arabic morphology probing. It
+Sarf prepares evaluation scaffolding for Arabic morphology probing. It
 does not run model inference, extract hidden states, compile llama.cpp, train
 probes, or run heavyweight training pipelines.
 

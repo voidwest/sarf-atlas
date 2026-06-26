@@ -38,7 +38,7 @@ def write_probe_config(
     }
     text = "\n".join(
         [
-            '# Sarf v0.4 probe config scaffold only. This file does not train probes.',
+            '# Sarf probe config scaffold only. This file does not train probes.',
             'schema = "sarf_probe_config_v0_4"',
             f'experiment = "{experiment_path}"',
             f"target_labels = {_toml_list(targets)}",
@@ -51,7 +51,7 @@ def write_probe_config(
             "selection = []",
             "",
             "[probe]",
-            '# Placeholder only. Base Sarf v0.4 does not train probes.',
+            '# Placeholder only. Base Sarf does not train probes.',
             'type = "linear_probe_placeholder"',
             'input_artifact = "hidden_states_placeholder"',
             "",
