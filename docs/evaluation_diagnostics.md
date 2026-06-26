@@ -2,7 +2,7 @@
 
 Sarf v0.4 prepares evaluation scaffolding for Arabic morphology probing. It
 does not run model inference, extract hidden states, compile llama.cpp, train
-probes, or train baselines.
+probes, or run heavyweight training pipelines.
 
 ## Label Diagnostics
 
@@ -54,6 +54,42 @@ accuracy.
 labels, split strategies, artifact manifest path, position policy, layer
 selection placeholder, and probe type placeholder.
 
-`sarf make-baselines` writes placeholder configs for a character n-gram baseline
-and majority baseline, plus a README describing expected inputs and outputs.
-These files are configuration scaffolds only.
+`sarf make-baselines` writes configs for a character n-gram baseline and a
+majority baseline, plus a README describing expected inputs and outputs. These
+configs are stable inputs for the optional lightweight runner:
+
+```bash
+sarf run-baseline --config configs/baselines/char_ngram.toml --splits splits/heldout.json --out artifacts/baselines/char_ngram.results.json
+sarf summarize-baseline artifacts/baselines/char_ngram.results.json
+```
+
+The runner uses only the Python standard library. It emits
+`sarf_baseline_results_v0_5` artifacts with per-label accuracy, predictions,
+train/test cardinality, and warnings for test labels unseen in train. It does
+not run model inference, extract hidden states, or train probes.
+
+Generated configs contain `[dependencies].modules = []`. Keep it empty for the
+bundled runners. If a local config declares extra modules, `sarf run-baseline`
+checks them before writing output and reports missing optional dependencies
+with a concrete install-or-remove hint.
+
+`examples/baseline_runner/` contains a tiny generated character n-gram result
+artifact and summary using the bundled paper-style toy data.
+
+## Tokenization Diagnostics
+
+`sarf tokenization-diagnostics` writes `sarf_tokenization_diagnostics_v0_7`
+reports for an experiment TOML or dataset JSONL:
+
+```bash
+sarf tokenization-diagnostics experiment.toml --out diagnostics/tokenization.json
+sarf tokenization-diagnostics experiment.toml --tokenization-artifact artifacts/tokenization.json --out diagnostics/tokenization.with-artifact.json
+sarf tokenization-diagnostics experiment.toml --tokenization-artifact artifacts/backend-a-tokenization.json --tokenization-artifact artifacts/backend-b-tokenization.json --out diagnostics/tokenization.compare.json
+```
+
+The report surfaces Unicode character counts, whitespace token counts, optional
+backend artifact token counts, and Arabic normalization or token-boundary
+concerns. When multiple artifacts are supplied, `artifact_comparisons` records
+matched rows, mean token counts, and mean deltas versus Unicode character
+counts per artifact. It is backend-agnostic by default and does not require
+tokenizer-atlas, llama.cpp, Ember, or model files.

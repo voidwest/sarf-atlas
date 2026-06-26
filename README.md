@@ -85,8 +85,11 @@ sarf validate-labels examples/paper_style/experiment.toml --out /tmp/sarf-v04/la
 sarf make-prompts examples/paper_style/experiment.toml --out /tmp/sarf-v04/prompts.jsonl
 sarf make-splits examples/paper_style/experiment.toml --out /tmp/sarf-v04/splits.json
 sarf summarize-splits examples/paper_style/tiny_morphology.jsonl /tmp/sarf-v04/splits.json --out /tmp/sarf-v04/split_diagnostics.json
+sarf tokenization-diagnostics examples/paper_style/experiment.toml --out /tmp/sarf-v04/tokenization_diagnostics.json
 sarf make-probe-config examples/paper_style/experiment.toml --artifact-manifest /tmp/sarf-v04/artifact_manifest.json --out /tmp/sarf-v04/probe_config.toml
 sarf make-baselines examples/paper_style/experiment.toml --out /tmp/sarf-v04/baselines
+sarf run-baseline --config /tmp/sarf-v04/baselines/char_ngram.toml --splits /tmp/sarf-v04/splits.json --out /tmp/sarf-v04/char_ngram.results.json
+sarf summarize-baseline /tmp/sarf-v04/char_ngram.results.json --out /tmp/sarf-v04/char_ngram.summary.json
 sarf make-experiment examples/paper_style/experiment.toml --out /tmp/sarf-v04/run
 sarf report /tmp/sarf-v04/run --out /tmp/sarf-v04/report.md
 ```
@@ -94,10 +97,23 @@ sarf report /tmp/sarf-v04/run --out /tmp/sarf-v04/report.md
 This supports dataset rows, prompt construction, label fields,
 lemma-heldout/root-heldout split metadata, character-baseline metadata
 placeholders, backend config stubs, artifact import, label diagnostics, split
-diagnostics, probe config scaffolds, baseline config scaffolds, and report
-scaffolding. Sarf v0.4 does not train probes or baselines, run models, extract
-hidden states, run model inference, or claim paper reproduction. See
+diagnostics, probe config scaffolds, baseline config scaffolds, optional
+standard-library majority/character n-gram baseline artifacts, and report
+scaffolding. Sarf does not train probes, run models, extract hidden states, run
+model inference, or claim paper reproduction. See
 `docs/evaluation_diagnostics.md` for leakage and cardinality guidance.
+
+Baseline configs declare optional Python module requirements under
+`[dependencies].modules`. The bundled `majority` and `char_ngram` runners leave
+that list empty and require only the standard library; declared missing modules
+fail before output is written. A tiny generated baseline output example is in
+`examples/baseline_runner/`.
+
+For a tiny Paper 1-style end-to-end demonstration path, see
+`examples/paper1_reproduction/README.md`. It uses bundled data and mock backend
+artifacts to exercise validation, prompts, leakage-aware diagnostics, artifact
+import, probe config generation, baseline comparison, and report output without
+claiming full Paper 1 reproduction.
 
 Current adapter namespace:
 

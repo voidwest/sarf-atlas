@@ -1,0 +1,39 @@
+{
+  "schema": "sarf_baseline_summary_v0_5",
+  "baseline": "char_ngram",
+  "dependency_status": {
+    "required": [
+      "python_standard_library"
+    ],
+    "optional_modules": [],
+    "missing_modules": [],
+    "available": true,
+    "install_hint": null
+  },
+  "strategy_count": 2,
+  "target_labels": [
+    "pos",
+    "gender",
+    "number",
+    "root",
+    "lemma",
+    "abstract_pattern"
+  ],
+  "mean_accuracy_by_label": {
+    "abstract_pattern": 0.25,
+    "gender": 0.0,
+    "lemma": 0.0,
+    "number": 0.0,
+    "pos": 0.25,
+    "root": 0.5
+  },
+  "warning_count": 6,
+  "warnings": [
+    "lemma_heldout label 'lemma' has test values unseen in train: كتب",
+    "root_heldout label 'gender' has test values unseen in train: fem",
+    "root_heldout label 'number' has test values unseen in train: sg",
+    "root_heldout label 'root' has test values unseen in train: ك ت ب",
+    "root_heldout label 'lemma' has test values unseen in train: كاتب, كتب",
+    "root_heldout label 'abstract_pattern' has test values unseen in train: فاعل"
+  ]
+}

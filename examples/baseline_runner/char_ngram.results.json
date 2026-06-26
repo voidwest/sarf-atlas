@@ -1,0 +1,277 @@
+{
+  "schema": "sarf_baseline_results_v0_5",
+  "baseline": "char_ngram",
+  "baseline_config": "examples/baseline_runner/baselines/char_ngram.toml",
+  "experiment": "examples/paper_style/experiment.toml",
+  "splits": "examples/baseline_runner/splits.json",
+  "dependency_status": {
+    "required": [
+      "python_standard_library"
+    ],
+    "optional_modules": [],
+    "missing_modules": [],
+    "available": true,
+    "install_hint": null
+  },
+  "target_labels": [
+    "pos",
+    "gender",
+    "number",
+    "root",
+    "lemma",
+    "abstract_pattern"
+  ],
+  "strategies": [
+    {
+      "strategy": "lemma_heldout",
+      "train_count": 3,
+      "test_count": 1,
+      "labels": {
+        "pos": {
+          "correct": 0,
+          "evaluated": 1,
+          "accuracy": 0.0,
+          "missing_gold": 0,
+          "missing_prediction": 0,
+          "train_cardinality": 2,
+          "test_cardinality": 1,
+          "unseen_test_values": []
+        },
+        "gender": {
+          "correct": 0,
+          "evaluated": 0,
+          "accuracy": null,
+          "missing_gold": 1,
+          "missing_prediction": 0,
+          "train_cardinality": 2,
+          "test_cardinality": 0,
+          "unseen_test_values": []
+        },
+        "number": {
+          "correct": 0,
+          "evaluated": 0,
+          "accuracy": null,
+          "missing_gold": 1,
+          "missing_prediction": 0,
+          "train_cardinality": 2,
+          "test_cardinality": 0,
+          "unseen_test_values": []
+        },
+        "root": {
+          "correct": 1,
+          "evaluated": 1,
+          "accuracy": 1.0,
+          "missing_gold": 0,
+          "missing_prediction": 0,
+          "train_cardinality": 2,
+          "test_cardinality": 1,
+          "unseen_test_values": []
+        },
+        "lemma": {
+          "correct": 0,
+          "evaluated": 1,
+          "accuracy": 0.0,
+          "missing_gold": 0,
+          "missing_prediction": 0,
+          "train_cardinality": 3,
+          "test_cardinality": 1,
+          "unseen_test_values": [
+            "كتب"
+          ]
+        },
+        "abstract_pattern": {
+          "correct": 0,
+          "evaluated": 1,
+          "accuracy": 0.0,
+          "missing_gold": 0,
+          "missing_prediction": 0,
+          "train_cardinality": 3,
+          "test_cardinality": 1,
+          "unseen_test_values": []
+        }
+      },
+      "predictions": {
+        "pos": [
+          {
+            "id": "sample-0001",
+            "gold": "VERB",
+            "prediction": "NOUN"
+          }
+        ],
+        "root": [
+          {
+            "id": "sample-0001",
+            "gold": "ك ت ب",
+            "prediction": "ك ت ب"
+          }
+        ],
+        "lemma": [
+          {
+            "id": "sample-0001",
+            "gold": "كتب",
+            "prediction": "كاتب"
+          }
+        ],
+        "abstract_pattern": [
+          {
+            "id": "sample-0001",
+            "gold": "فعل",
+            "prediction": "فاعل"
+          }
+        ]
+      }
+    },
+    {
+      "strategy": "root_heldout",
+      "train_count": 2,
+      "test_count": 2,
+      "labels": {
+        "pos": {
+          "correct": 1,
+          "evaluated": 2,
+          "accuracy": 0.5,
+          "missing_gold": 0,
+          "missing_prediction": 0,
+          "train_cardinality": 2,
+          "test_cardinality": 2,
+          "unseen_test_values": []
+        },
+        "gender": {
+          "correct": 0,
+          "evaluated": 1,
+          "accuracy": 0.0,
+          "missing_gold": 1,
+          "missing_prediction": 0,
+          "train_cardinality": 1,
+          "test_cardinality": 1,
+          "unseen_test_values": [
+            "fem"
+          ]
+        },
+        "number": {
+          "correct": 0,
+          "evaluated": 1,
+          "accuracy": 0.0,
+          "missing_gold": 1,
+          "missing_prediction": 0,
+          "train_cardinality": 1,
+          "test_cardinality": 1,
+          "unseen_test_values": [
+            "sg"
+          ]
+        },
+        "root": {
+          "correct": 0,
+          "evaluated": 2,
+          "accuracy": 0.0,
+          "missing_gold": 0,
+          "missing_prediction": 0,
+          "train_cardinality": 1,
+          "test_cardinality": 1,
+          "unseen_test_values": [
+            "ك ت ب"
+          ]
+        },
+        "lemma": {
+          "correct": 0,
+          "evaluated": 2,
+          "accuracy": 0.0,
+          "missing_gold": 0,
+          "missing_prediction": 0,
+          "train_cardinality": 2,
+          "test_cardinality": 2,
+          "unseen_test_values": [
+            "كاتب",
+            "كتب"
+          ]
+        },
+        "abstract_pattern": {
+          "correct": 1,
+          "evaluated": 2,
+          "accuracy": 0.5,
+          "missing_gold": 0,
+          "missing_prediction": 0,
+          "train_cardinality": 2,
+          "test_cardinality": 2,
+          "unseen_test_values": [
+            "فاعل"
+          ]
+        }
+      },
+      "predictions": {
+        "pos": [
+          {
+            "id": "sample-0001",
+            "gold": "VERB",
+            "prediction": "NOUN"
+          },
+          {
+            "id": "sample-0002",
+            "gold": "NOUN",
+            "prediction": "NOUN"
+          }
+        ],
+        "gender": [
+          {
+            "id": "sample-0002",
+            "gold": "fem",
+            "prediction": "masc"
+          }
+        ],
+        "number": [
+          {
+            "id": "sample-0002",
+            "gold": "sg",
+            "prediction": "pl"
+          }
+        ],
+        "root": [
+          {
+            "id": "sample-0001",
+            "gold": "ك ت ب",
+            "prediction": "د ر س"
+          },
+          {
+            "id": "sample-0002",
+            "gold": "ك ت ب",
+            "prediction": "د ر س"
+          }
+        ],
+        "lemma": [
+          {
+            "id": "sample-0001",
+            "gold": "كتب",
+            "prediction": "درس"
+          },
+          {
+            "id": "sample-0002",
+            "gold": "كاتب",
+            "prediction": "درس"
+          }
+        ],
+        "abstract_pattern": [
+          {
+            "id": "sample-0001",
+            "gold": "فعل",
+            "prediction": "فعل"
+          },
+          {
+            "id": "sample-0002",
+            "gold": "فاعل",
+            "prediction": "فعل"
+          }
+        ]
+      }
+    }
+  ],
+  "warnings": [
+    "lemma_heldout label 'lemma' has test values unseen in train: كتب",
+    "root_heldout label 'gender' has test values unseen in train: fem",
+    "root_heldout label 'number' has test values unseen in train: sg",
+    "root_heldout label 'root' has test values unseen in train: ك ت ب",
+    "root_heldout label 'lemma' has test values unseen in train: كاتب, كتب",
+    "root_heldout label 'abstract_pattern' has test values unseen in train: فاعل"
+  ],
+  "not_probe_training": true,
+  "not_model_inference": true
+}

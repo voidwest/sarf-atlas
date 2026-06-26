@@ -18,3 +18,12 @@ Reproducibility assets should remain explicit and traceable:
 - Pipeline commands and configuration.
 - Exact prompts.
 - Artifact trail for outputs, tables, and plots.
+
+Professor-packet demonstration path:
+
+- `examples/paper1_reproduction/README.md`
+- `examples/paper1_reproduction/experiment.toml`
+- `examples/paper1_reproduction/mock_backend/`
+
+This path demonstrates the workflow contract with tiny bundled data and mock
+backend artifacts. It does not claim full Paper 1 reproduction.

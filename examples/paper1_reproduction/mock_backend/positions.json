@@ -1,0 +1,12 @@
+{
+  "schema": "sarf_mock_positions_v0_6",
+  "run_id": "paper1-style-demo",
+  "position_policy": "prompt_final",
+  "not_research_output": true,
+  "positions": [
+    {"id": "sample-0001", "position": -1},
+    {"id": "sample-0002", "position": -1},
+    {"id": "sample-0003", "position": -1},
+    {"id": "sample-0004", "position": -1}
+  ]
+}

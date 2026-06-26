@@ -1,0 +1,17 @@
+# Sarf baseline config. Use with `sarf run-baseline --config char_ngram.toml --splits split_metadata.json --out char_ngram.results.json`.
+schema = "sarf_baseline_config_v0_5"
+baseline = "char_ngram"
+experiment = "examples/paper_style/experiment.toml"
+target_labels = ["pos", "gender", "number", "root", "lemma", "abstract_pattern"]
+
+[features]
+ngram_min = 1
+ngram_max = 5
+
+[dependencies]
+# Optional Python modules this baseline needs beyond base Sarf.
+modules = []
+
+[notes]
+status = "runnable_optional_baseline"
+does_not = "run model inference, extract hidden states, or train probes"

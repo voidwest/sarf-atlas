@@ -5,13 +5,13 @@ import json
 import sys
 import tempfile
 import unittest
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from sarf.cli import main
+from sarf.cli import entrypoint, main
 from sarf.diagnostics import label_diagnostics, split_diagnostics
 
 
@@ -150,8 +150,11 @@ class V04CliTests(unittest.TestCase):
             splits = root / "splits.json"
             labels_json = root / "labels.json"
             split_json = root / "split_summary.json"
+            token_json = root / "tokenization_summary.json"
             probe_config = root / "probe_config.toml"
             baseline_dir = root / "baselines"
+            baseline_results = root / "char_ngram.results.json"
+            baseline_summary = root / "char_ngram.summary.json"
 
             output = self.run_cli(["validate-labels", str(config), "--out", str(labels_json)])
             self.assertIn("Label diagnostics", output)
@@ -161,6 +164,14 @@ class V04CliTests(unittest.TestCase):
             output = self.run_cli(["summarize-splits", str(dataset), str(splits), "--out", str(split_json)])
             self.assertIn("Split diagnostics", output)
             self.assertTrue(split_json.is_file())
+
+            output = self.run_cli(["tokenization-diagnostics", str(config), "--out", str(token_json)])
+            self.assertIn("Tokenization diagnostics", output)
+            token_payload = json.loads(token_json.read_text(encoding="utf-8"))
+            self.assertEqual(token_payload["schema"], "sarf_tokenization_diagnostics_v0_7")
+            self.assertTrue(
+                any("no backend tokenization artifact supplied" in warning for warning in token_payload["warnings"])
+            )
 
             output = self.run_cli(
                 [
@@ -178,7 +189,69 @@ class V04CliTests(unittest.TestCase):
             output = self.run_cli(["make-baselines", str(config), "--out", str(baseline_dir)])
             self.assertIn("wrote", output)
             self.assertTrue((baseline_dir / "char_ngram.toml").is_file())
-            self.assertIn("does not train baselines", (baseline_dir / "README.md").read_text(encoding="utf-8"))
+            self.assertIn("run-baseline", (baseline_dir / "README.md").read_text(encoding="utf-8"))
+
+            output = self.run_cli(
+                [
+                    "run-baseline",
+                    "--config",
+                    str(baseline_dir / "char_ngram.toml"),
+                    "--splits",
+                    str(splits),
+                    "--out",
+                    str(baseline_results),
+                ]
+            )
+            self.assertIn("wrote", output)
+            baseline_payload = json.loads(baseline_results.read_text(encoding="utf-8"))
+            self.assertEqual(baseline_payload["schema"], "sarf_baseline_results_v0_5")
+            self.assertEqual(baseline_payload["baseline"], "char_ngram")
+            self.assertEqual(baseline_payload["dependency_status"]["optional_modules"], [])
+            self.assertIn("lemma_heldout", [item["strategy"] for item in baseline_payload["strategies"]])
+
+            output = self.run_cli(["summarize-baseline", str(baseline_results), "--out", str(baseline_summary)])
+            self.assertEqual(output, "")
+            summary_payload = json.loads(baseline_summary.read_text(encoding="utf-8"))
+            self.assertEqual(summary_payload["schema"], "sarf_baseline_summary_v0_5")
+            self.assertTrue(summary_payload["dependency_status"]["available"])
+            self.assertIn("pos", summary_payload["target_labels"])
+
+    def test_run_baseline_fails_before_output_when_declared_dependency_is_missing(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            dataset = self.write_dataset(root)
+            config = self.write_config(root, dataset)
+            splits = root / "splits.json"
+            baseline_dir = root / "baselines"
+            baseline_config = baseline_dir / "char_ngram.toml"
+            output_path = root / "missing_dep.results.json"
+
+            self.run_cli(["make-splits", str(config), "--out", str(splits)])
+            self.run_cli(["make-baselines", str(config), "--out", str(baseline_dir)])
+            baseline_config.write_text(
+                baseline_config.read_text(encoding="utf-8").replace(
+                    "modules = []",
+                    'modules = ["sarf_atlas_missing_optional_baseline_dependency"]',
+                ),
+                encoding="utf-8",
+            )
+
+            error_buffer = io.StringIO()
+            with patch.dict("os.environ", {"PATH": ""}, clear=True), redirect_stderr(error_buffer):
+                exit_code = entrypoint(
+                    [
+                        "run-baseline",
+                        "--config",
+                        str(baseline_config),
+                        "--splits",
+                        str(splits),
+                        "--out",
+                        str(output_path),
+                    ]
+                )
+            self.assertEqual(exit_code, 1)
+            self.assertIn("missing optional baseline dependencies", error_buffer.getvalue())
+            self.assertFalse(output_path.exists())
 
     def test_report_includes_diagnostics_when_available(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

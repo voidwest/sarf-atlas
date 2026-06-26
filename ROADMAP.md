@@ -6,8 +6,9 @@ probing, evaluation, and intervention work.
 ## Package Status
 
 - Current PyPI release: `sarf-atlas==0.4.0`.
-- Current focus: stabilization, professor packet, and roadmap clarity before
-  v0.5 implementation work.
+- Current local implementation focus: v0.5-v0.7 milestone support is present
+  for optional baselines, the Paper 1-style example, and tokenization
+  diagnostics. v1.0 stabilization remains the next contract-freeze step.
 
 ## Engineering Milestones
 

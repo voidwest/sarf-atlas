@@ -1,0 +1,23 @@
+[experiment]
+run_id = "paper1-style-demo"
+
+[dataset]
+path = "../paper_style/tiny_morphology.jsonl"
+
+[prompts]
+template = "حلل صرفيا الكلمة العربية: {surface}."
+position_policy = "prompt_final"
+
+[labels]
+targets = ["pos", "gender", "number", "root", "lemma", "abstract_pattern"]
+
+[splits]
+strategies = ["lemma_heldout", "root_heldout"]
+test_fraction = 0.25
+seed = 42
+
+[backend]
+name = "mock-files"
+architecture = "paper1-style-mock"
+model_path = "mock://qwen3-0.6b-or-llama-3.2-1b"
+tokenizer_path = "mock://tokenizer"

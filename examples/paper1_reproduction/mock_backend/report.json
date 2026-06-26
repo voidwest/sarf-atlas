@@ -1,0 +1,11 @@
+{
+  "schema": "sarf_mock_backend_report_v0_6",
+  "run_id": "paper1-style-demo",
+  "backend": "mock-files",
+  "not_research_output": true,
+  "status": "mocked_extraction_complete",
+  "notes": [
+    "This report proves the artifact import path can be exercised without running a model.",
+    "It must not be cited as Qwen3, Llama, Ember, or llama.cpp output."
+  ]
+}

@@ -1,0 +1,13 @@
+# Sarf majority baseline config. Use with `sarf run-baseline --config majority.toml --splits split_metadata.json --out majority.results.json`.
+schema = "sarf_baseline_config_v0_5"
+baseline = "majority"
+experiment = "examples/paper_style/experiment.toml"
+target_labels = ["pos", "gender", "number", "root", "lemma", "abstract_pattern"]
+
+[dependencies]
+# Optional Python modules this baseline needs beyond base Sarf.
+modules = []
+
+[notes]
+status = "runnable_optional_baseline"
+prediction_policy = "use the most frequent training label"

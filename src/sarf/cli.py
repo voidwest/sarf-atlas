@@ -26,6 +26,7 @@ from .project import init_project
 from .splits import lemma_heldout_split
 from .summary import summarize_manifest
 from .toy import toy_records
+from .tokenization import format_tokenization_diagnostics, tokenization_diagnostics
 from .validation import validate_run
 from .workflow import DEFAULT_TEMPLATE, write_example_workflow
 from .artifacts import validate_manifest
@@ -33,6 +34,7 @@ from .backends import llama_cpp
 from .backends import ember as ember_backend
 from .backends.ember import import_ember_run
 from .backends.files import import_files
+from .baselines import run_baseline, summarize_baseline
 
 
 def _yes_no(value: bool) -> str:
@@ -147,6 +149,15 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("splits", help="split metadata JSON or split JSONL")
     p.add_argument("--out", help="optional split diagnostics JSON")
 
+    p = sub.add_parser("tokenization-diagnostics", help="summarize tokenization and Arabic normalization concerns")
+    p.add_argument("input", help="experiment TOML or morphology JSONL")
+    p.add_argument(
+        "--tokenization-artifact",
+        action="append",
+        help="optional backend tokenization JSON artifact; may be passed multiple times",
+    )
+    p.add_argument("--out", help="optional tokenization diagnostics JSON")
+
     p = sub.add_parser("make-experiment", help="write a Paper-style experiment scaffold from TOML")
     p.add_argument("experiment", help="experiment TOML")
     p.add_argument("--out", required=True, help="output run directory")
@@ -159,6 +170,15 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("make-baselines", help="write baseline config scaffold files")
     p.add_argument("experiment", help="experiment TOML")
     p.add_argument("--out", default="baseline_configs", help="output baseline scaffold directory")
+
+    p = sub.add_parser("run-baseline", help="run an optional lightweight baseline from a baseline config")
+    p.add_argument("--config", required=True, help="baseline TOML config from make-baselines")
+    p.add_argument("--splits", required=True, help="split metadata JSON from make-splits or make-experiment")
+    p.add_argument("--out", required=True, help="output baseline result artifact JSON")
+
+    p = sub.add_parser("summarize-baseline", help="summarize a baseline result artifact")
+    p.add_argument("artifact", help="baseline result artifact JSON")
+    p.add_argument("--out", help="optional summary JSON output path")
 
     p = sub.add_parser("report", help="write a readable experiment report")
     p.add_argument("run_dir", help="experiment run directory")
@@ -267,6 +287,11 @@ def main(argv: list[str] | None = None) -> int:
         if args.out:
             write_json(args.out, report)
         print(format_split_diagnostics(report))
+    elif args.command == "tokenization-diagnostics":
+        report = tokenization_diagnostics(args.input, tokenization_artifact=args.tokenization_artifact)
+        if args.out:
+            write_json(args.out, report)
+        print(format_tokenization_diagnostics(report))
     elif args.command == "make-experiment":
         write_experiment_scaffold(args.experiment, args.out)
     elif args.command == "make-probe-config":
@@ -275,6 +300,15 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "make-baselines":
         write_baseline_scaffolds(args.experiment, args.out)
         print(f"wrote {args.out}")
+    elif args.command == "run-baseline":
+        run_baseline(args.config, args.splits, args.out)
+        print(f"wrote {args.out}")
+    elif args.command == "summarize-baseline":
+        summary = summarize_baseline(args.artifact)
+        if args.out:
+            write_json(args.out, summary)
+        else:
+            print(json.dumps(summary, ensure_ascii=False, indent=2))
     elif args.command == "report":
         summary_path = Path(args.run_dir) / "summary.json"
         if not summary_path.exists():
